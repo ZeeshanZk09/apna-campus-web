@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "@/app/lib/models/User";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,7 +11,7 @@ export default function ProtectedRoute({
   children: React.ReactNode;
   adminOnly?: boolean;
 }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

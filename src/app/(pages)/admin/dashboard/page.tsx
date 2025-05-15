@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ui/ProtectedRoute";
 import UsersTable from "@/components/admin/Users.Table";
 import Loader from "@/components/ui/Loader";
+import { User } from "@/app/lib/models/User";
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -91,7 +92,7 @@ export default function AdminDashboard() {
         throw new Error("Failed to delete user");
       }
 
-      setUsers(users.filter((user) => user._id !== userId));
+      setUsers(users.filter((user) => user._id.toString() !== userId));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete user");
     }
@@ -113,7 +114,7 @@ export default function AdminDashboard() {
 
       setUsers(
         users.map((user) =>
-          user._id === userId ? { ...user, isAdmin: !isAdmin } : user
+          user._id.toString() === userId ? { ...user, isAdmin: !isAdmin } : user
         )
       );
     } catch (err) {

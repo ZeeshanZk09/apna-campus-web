@@ -3,7 +3,7 @@ import { authenticateUser } from "../utils/auth";
 
 export async function adminMiddleware(request: Request) {
   const user = await authenticateUser();
-
+  console.log(request);
   if (!user) {
     return NextResponse.json(
       { error: "Authentication required" },

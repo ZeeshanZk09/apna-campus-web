@@ -3,7 +3,7 @@ import { authenticateUser } from "@/app/lib/utils/auth";
 
 export async function authMiddleware(request: Request) {
   const user = await authenticateUser();
-
+  console.log(request);
   if (!user) {
     return NextResponse.json(
       { error: "Authentication required" },

@@ -77,6 +77,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ user: sanitizedUser });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Failed to search users" },
       { status: 500 }
@@ -95,6 +96,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Failed to update user" },
       { status: 500 }
@@ -113,6 +115,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Failed to delete user" },
       { status: 500 }

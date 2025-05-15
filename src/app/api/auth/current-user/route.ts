@@ -20,6 +20,7 @@ export async function GET() {
       },
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Failed to fetch user" },
       { status: 500 }

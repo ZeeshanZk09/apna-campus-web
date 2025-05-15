@@ -40,6 +40,7 @@ async function processImageUpload(
 
 // Fetch authenticated user
 export async function GET(request: Request) {
+  console.log(request);
   try {
     const user = await requireAuth();
     if (user instanceof NextResponse) return user;

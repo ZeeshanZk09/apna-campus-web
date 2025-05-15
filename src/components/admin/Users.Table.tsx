@@ -1,7 +1,9 @@
 "use client";
 
+import { User } from "@/app/lib/models/User";
+
 interface UsersTableProps {
-  users: any[];
+  users: User[];
   onDeleteUser: (userId: string) => void;
   onToggleAdmin: (userId: string, isAdmin: boolean) => void;
 }
@@ -50,7 +52,7 @@ export default function UsersTable({
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {users.map((user) => (
-            <tr key={user._id}>
+            <tr key={user._id.toString()}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-10 w-10">
@@ -86,7 +88,9 @@ export default function UsersTable({
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
-                  onClick={() => onToggleAdmin(user._id, user.isAdmin)}
+                  onClick={() =>
+                    onToggleAdmin(user._id.toString(), user.isAdmin)
+                  }
                   className={`mr-3 ${
                     user.isAdmin
                       ? "text-yellow-600 hover:text-yellow-900"
@@ -96,7 +100,7 @@ export default function UsersTable({
                   {user.isAdmin ? "Remove Admin" : "Make Admin"}
                 </button>
                 <button
-                  onClick={() => onDeleteUser(user._id)}
+                  onClick={() => onDeleteUser(user._id.toString())}
                   className="text-red-600 hover:text-red-900"
                 >
                   Delete

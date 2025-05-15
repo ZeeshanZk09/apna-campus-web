@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Logout from "./ui/Logout";
 import Hamburger from "./ui/Hamburger";
+import { User } from "@/app/lib/models/User";
+
 const HeaderForDesktop = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sideBar, setSideBar] = useState(false);
   const router = useRouter();

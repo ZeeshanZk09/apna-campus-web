@@ -55,6 +55,7 @@ export const authenticateUser = async () => {
       isAdmin: decoded.isAdmin,
     };
   } catch (error) {
+    console.log(error);
     return null;
   }
 };
