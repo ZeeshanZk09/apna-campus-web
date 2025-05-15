@@ -1,5 +1,4 @@
 import GetStart from "@/components/ui/GetStart";
-import HeroImgUI from "@/components/ui/HeroImgUI";
 import React from "react";
 
 const Home = () => {
@@ -12,9 +11,7 @@ const Home = () => {
         </h1>
 
         {/* Hero Image - scales appropriately */}
-        <div className="row-start-2 row-end-3 w-full h-full flex items-center justify-center my-4 sm:my-6">
-          <HeroImgUI />
-        </div>
+        <div className="row-start-2 row-end-3 w-full h-full flex items-center justify-center my-4 sm:my-6"></div>
 
         {/* Text and CTA - adjusts spacing and size */}
         <div className="row-start-3 row-end-4 flex flex-col justify-between items-center mt-4 sm:mt-6">
