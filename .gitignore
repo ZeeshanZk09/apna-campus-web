@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+/settings.json
+
 # next.js
 /.next/
 /out/
