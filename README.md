@@ -1,4 +1,4 @@
-# Campus Student Management System 🎓
+# Apna Campus - Student Management System 🎓
 
 A **Next.js** based web application for managing student records, attendance, and academic activities in educational campuses.
 
