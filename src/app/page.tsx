@@ -1,28 +1,32 @@
-import GetStart from "@/components/ui/GetStart";
-import HeroImgUI from "@/components/ui/HeroImgUI";
-import React from "react";
+import GetStart from '@/components/ui/GetStart';
+import HeroImgUI from '@/components/ui/HeroImgUI';
+import React from 'react';
 
 const Home = () => {
   return (
-    <main className="overflow-x-hidden">
-      <section className="grid grid-rows-[auto_1fr_auto] grid-cols-1 px-4 sm:px-6 md:px-8 lg:px-10 w-full py-6 sm:py-8 md:py-10 min-h-[80vh] items-center justify-center">
-        {/* Heading - adjusts size based on screen */}
-        <h1 className="row-start-1 row-end-2 text-4xl sm:text-center lg:text-5xl font-bold mb-4 sm:mb-6">
+    <main className='overflow-x-hidden'>
+      <section className='px-4 sm:px-6 md:px-8 lg:px-10 w-full py-6 sm:py-8 md:py-10 min-h-[80vh]'>
+        {/* Heading - Centered using text-align */}
+        <h1 className='text-center text-4xl sm:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6'>
           Unlock Your Future with Quality Learning
         </h1>
 
-        {/* Hero Image - scales appropriately */}
-        <div className="row-start-2 row-end-3 w-full h-full flex items-center justify-center my-4 sm:my-6">
-          <HeroImgUI />
+        {/* Hero Image - Centered using margin-auto */}
+        <div className='w-full text-center'>
+          <div className='mx-auto inline-block'>
+            <HeroImgUI />
+          </div>
         </div>
 
-        {/* Text and CTA - adjusts spacing and size */}
-        <div className="row-start-3 row-end-4 flex flex-col justify-between items-center mt-4 sm:mt-6">
-          <p className="text-center sm:text-lg md:text-xl mb-4 sm:mb-6">
-            Join a community of learners who are passionate about gaining new
-            skills and advancing their careers
+        {/* Text and CTA - Centered using text-align and margin-auto */}
+        <div className='text-center mt-4 sm:mt-6'>
+          <p className='sm:text-lg md:text-xl mb-4 sm:mb-6 mx-auto max-w-xl'>
+            Join a community of learners who are passionate about gaining new skills and advancing
+            their careers
           </p>
-          <GetStart />
+          <div className='inline-block'>
+            <GetStart />
+          </div>
         </div>
       </section>
     </main>
