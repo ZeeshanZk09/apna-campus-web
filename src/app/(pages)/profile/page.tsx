@@ -135,6 +135,25 @@ export default function ProfilePage() {
     );
   }
 
+  interface FormatJoinDateOptions {
+    year: 'numeric';
+
+    month: 'long';
+    day: 'numeric';
+  }
+
+  const formatJoinDate = (dateString: string): string => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      } as FormatJoinDateOptions);
+    } catch {
+      return 'Unknown join date';
+    }
+  };
+
   if (!user) {
     return <div>Not authenticated</div>;
   }
@@ -296,10 +315,7 @@ export default function ProfilePage() {
               <div>
                 <h2 className='text-lg sm:text-2xl font-bold'>{user.username}</h2>
                 <p>{user.email}</p>
-                <p>
-                  Joined at{' '}
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                </p>
+                <p>Joined at {formatJoinDate(new Date(user.createdAt).toLocaleDateString())}</p>
                 {user.isAdmin && (
                   <span className='inline-block mt-2 px-3 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full'>
                     Admin
