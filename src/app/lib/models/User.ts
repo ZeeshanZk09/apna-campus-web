@@ -26,8 +26,8 @@ export const createUser = async (userData: Omit<User, '_id' | 'createdAt' | 'upd
     ...userData,
     password: hashedPassword,
     isAdmin: false,
-    createdAt: { type: Date, default: Date.now() },
-    updatedAt: { type: Date, default: Date.now() },
+    createdAt: { type: Date, default: new Date() },
+    updatedAt: { type: Date, default: new Date() },
   };
 
   const result = await db.collection('users').insertOne(newUser);
@@ -57,7 +57,7 @@ export const updateUserById = async (id: string, updateData: Partial<User>) => {
 
   const updateObj = {
     ...updateData,
-    updatedAt: Date.now(),
+    updatedAt: new Date(),
   };
 
   if (updateData.password) {
