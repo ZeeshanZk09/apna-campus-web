@@ -10,6 +10,26 @@ import { User } from '@/app/lib/models/User';
 import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
 
+export interface FormatDateInput {
+  toString?: () => string;
+}
+
+export function formatDate(dateInput: string | number | Date | FormatDateInput): string {
+  // Handle multiple date formats
+  const date = new Date(dateInput as string | number | Date);
+
+  if (isNaN(date.getTime())) {
+    // Try ISO string if direct conversion fails
+    const isoDate = new Date((dateInput as FormatDateInput)?.toString?.() ?? '');
+    return !isNaN(isoDate.getTime()) ? isoDate.toLocaleDateString() : 'N/A';
+  }
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const coverPicRef = useRef<HTMLInputElement>(null);
@@ -134,25 +154,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  interface FormatJoinDateOptions {
-    year: 'numeric';
-
-    month: 'long';
-    day: 'numeric';
-  }
-
-  const formatJoinDate = (dateString: string): string => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      } as FormatJoinDateOptions);
-    } catch {
-      return 'Unknown join date';
-    }
-  };
 
   if (!user) {
     return <div>Not authenticated</div>;
@@ -315,7 +316,7 @@ export default function ProfilePage() {
               <div>
                 <h2 className='text-lg sm:text-2xl font-bold'>{user.username}</h2>
                 <p>{user.email}</p>
-                <p>Joined at {formatJoinDate(new Date(user.createdAt).toLocaleDateString())}</p>
+                <p> Joined at {user?.createdAt ? formatDate(user.createdAt) : 'N/A'}</p>
                 {user.isAdmin && (
                   <span className='inline-block mt-2 px-3 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full'>
                     Admin
