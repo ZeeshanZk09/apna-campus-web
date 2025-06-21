@@ -1,6 +1,6 @@
-import clientPromise from "@/app/lib/db/connect";
-import bcrypt from "bcryptjs";
-import { ObjectId } from "mongodb";
+import clientPromise from '@/app/lib/db/connect';
+import bcrypt from 'bcryptjs';
+import { ObjectId } from 'mongodb';
 
 export interface User {
   _id: ObjectId;
@@ -14,9 +14,7 @@ export interface User {
   updatedAt: Date;
 }
 
-export const createUser = async (
-  userData: Omit<User, "_id" | "createdAt" | "updatedAt">
-) => {
+export const createUser = async (userData: Omit<User, '_id' | 'createdAt' | 'updatedAt'>) => {
   const client = await clientPromise;
   const db = client.db();
 
@@ -28,29 +26,29 @@ export const createUser = async (
     ...userData,
     password: hashedPassword,
     isAdmin: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   };
 
-  const result = await db.collection("users").insertOne(newUser);
+  const result = await db.collection('users').insertOne(newUser);
   return result.insertedId;
 };
 
 export const findUserByEmail = async (email: string) => {
   const client = await clientPromise;
   const db = client.db();
-  return await db.collection("users").findOne({ email });
+  return await db.collection('users').findOne({ email });
 };
 export const findUserByUsername = async (username: string) => {
   const client = await clientPromise;
   const db = client.db();
-  return await db.collection("users").findOne({ username });
+  return await db.collection('users').findOne({ username });
 };
 
 export const findUserById = async (id: string) => {
   const client = await clientPromise;
   const db = client.db();
-  return await db.collection("users").findOne({ _id: new ObjectId(id) });
+  return await db.collection('users').findOne({ _id: new ObjectId(id) });
 };
 
 export const updateUserById = async (id: string, updateData: Partial<User>) => {
@@ -67,26 +65,21 @@ export const updateUserById = async (id: string, updateData: Partial<User>) => {
     updateObj.password = await bcrypt.hash(updateData.password, salt);
   }
 
-  return await db
-    .collection("users")
-    .updateOne({ _id: new ObjectId(id) }, { $set: updateObj });
+  return await db.collection('users').updateOne({ _id: new ObjectId(id) }, { $set: updateObj });
 };
 
 export const deleteUserById = async (id: string) => {
   const client = await clientPromise;
   const db = client.db();
-  return await db.collection("users").deleteOne({ _id: new ObjectId(id) });
+  return await db.collection('users').deleteOne({ _id: new ObjectId(id) });
 };
 
 export const getAllUsers = async () => {
   const client = await clientPromise;
   const db = client.db();
-  return await db.collection("users").find().toArray();
+  return await db.collection('users').find().toArray();
 };
 
-export const comparePasswords = async (
-  password: string,
-  hashedPassword: string
-) => {
+export const comparePasswords = async (password: string, hashedPassword: string) => {
   return await bcrypt.compare(password, hashedPassword);
 };
