@@ -296,12 +296,7 @@ export default function ProfilePage() {
               <div>
                 <h2 className='text-lg sm:text-2xl font-bold'>{user.username}</h2>
                 <p>{user.email}</p>
-                <p>
-                  Joined at{' '}
-                  {user.createdAt instanceof Date
-                    ? user.createdAt.toLocaleDateString()
-                    : user.createdAt}
-                </p>
+                <p>Joined at {user.createdAt.toLocaleDateString()}</p>
                 {user.isAdmin && (
                   <span className='inline-block mt-2 px-3 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full'>
                     Admin
