@@ -155,6 +155,10 @@ export default function ProfilePage() {
     );
   }
 
+  console.log('Raw createdAt value:', user?.createdAt);
+  console.log('Type of createdAt:', typeof user?.createdAt);
+  console.log('Date conversion test:', new Date(user!.createdAt));
+
   if (!user) {
     return <div>Not authenticated</div>;
   }
