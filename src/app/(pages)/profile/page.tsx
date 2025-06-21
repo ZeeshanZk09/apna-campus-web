@@ -10,11 +10,11 @@ import { User } from '@/app/lib/models/User';
 import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
 
-export interface FormatDateInput {
+interface FormatDateInput {
   toString?: () => string;
 }
 
-export function formatDate(dateInput: string | number | Date | FormatDateInput): string {
+function formatDate(dateInput: string | number | Date | FormatDateInput): string {
   // Handle multiple date formats
   const date = new Date(dateInput as string | number | Date);
 
