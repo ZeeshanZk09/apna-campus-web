@@ -1,0 +1,33 @@
+model Exam {
+  id           String    @id @default(uuid())
+  courseId     String
+  title        String
+  type         ExamType  @default(FINAL)
+  maxMarks     Int
+  passingMarks Int
+  date         DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+
+  course  Course       @relation(fields: [courseId], references: [id])
+  results ExamResult[]
+ 
+  @@index([courseId])
+}
+
+model ExamResult {
+  id           String      @id @default(uuid())
+  examId       String
+  enrollmentId String
+  marks        Float?
+  grade        GradeScale?
+  remarks      String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @default(now())
+
+  exam       Exam       @relation(fields: [examId], references: [id])
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+
+  @@unique([examId, enrollmentId])
+  @@index([enrollmentId])
+}

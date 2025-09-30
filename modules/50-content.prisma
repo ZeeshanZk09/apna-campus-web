@@ -1,0 +1,58 @@
+
+model Post {
+  id          String    @id @default(uuid())
+  instituteId String?
+  title       String
+  content     String
+  images      String[]
+  likes       Int       @default(0)
+  comments    Comment[]
+  userId      String? // optional if admin creates it
+  adminId     String? // optional if admin creates it
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user      User?      @relation("PostUser", fields: [userId], references: [id])
+  admin     Admin?     @relation("PostAdmin", fields: [adminId], references: [id])
+  institute Institute? @relation(fields: [instituteId], references: [id])
+
+  @@index([instituteId])
+  @@index([userId, createdAt])
+}
+
+model Comment {
+  id           String   @id @default(uuid())
+  content      String
+  userId       String? // optional if admin
+  adminId      String? // optional if admin
+  assignmentId String?
+  postId       String?
+  instituteId  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User?       @relation("CommentUser", fields: [userId], references: [id])
+  admin      Admin?      @relation("CommentAdmin", fields: [adminId], references: [id])
+  assignment Assignment? @relation(fields: [assignmentId], references: [id])
+  post       Post?       @relation(fields: [postId], references: [id])
+  institute  Institute?  @relation(fields: [instituteId], references: [id])
+
+  @@index([postId])
+  @@index([instituteId])
+}
+
+model Asset {
+  id          String   @id @default(uuid())
+  instituteId String?
+  url         String
+  key         String?
+  mimeType    String?
+  size        Int?
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  institute Institute? @relation(fields: [instituteId], references: [id])
+  createdBy User?      @relation(fields: [createdById], references: [id])
+
+  @@index([instituteId])
+}

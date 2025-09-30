@@ -1,78 +1,65 @@
-import { NextResponse } from "next/server";
-import { createUser, findUserByEmail } from "@/app/lib/models/User";
-import { generateToken, setAuthCookie } from "@/app/lib/utils/auth";
-import { uploadImage } from "@/app/lib/utils/cloudinary";
+import db from '@/lib/prisma';
+import { userSchema } from '@/lib/validators/userValidator';
+import generateToken from '@/app/actions/generateToken';
+import { getExistingUser } from '@/utils/authHelpers';
+import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    // Check content type
-    const contentType = request.headers.get("content-type") || "";
-    if (!contentType.includes("multipart/form-data")) {
-      return NextResponse.json(
-        { error: "Content-Type must be multipart/form-data" },
-        { status: 400 }
-      );
-    }
+    const formData = await req.formData();
 
-    const formData = await request.formData();
-
-    const username = formData.get("username") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const profilePic = formData.get("profilePic") as File | null;
-    const coverPic = formData.get("coverPic") as File | null;
-
-    // Check if user exists
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already in use" },
-        { status: 400 }
-      );
-    }
-
-    // Upload images to Cloudinary
-    let profilePicUrl = null;
-    if (profilePic) {
-      const profilePicBuffer = await profilePic.arrayBuffer();
-      const profilePicBase64 = Buffer.from(profilePicBuffer).toString("base64");
-      profilePicUrl = await uploadImage(
-        `data:${profilePic.type};base64,${profilePicBase64}`
-      );
-    }
-
-    let coverPicUrl = null;
-    if (coverPic) {
-      const coverPicBuffer = await coverPic.arrayBuffer();
-      const coverPicBase64 = Buffer.from(coverPicBuffer).toString("base64");
-      coverPicUrl = await uploadImage(
-        `data:${coverPic.type};base64,${coverPicBase64}`,
-        "cover_pics"
-      );
-    }
-
-    // Create user
-    const userData = {
-      username,
-      email,
-      password,
-      profilePic: profilePicUrl || undefined,
-      coverPic: coverPicUrl || undefined,
-      isAdmin: false,
+    const rawData = {
+      username: formData.get('username') as string,
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
     };
 
-    const userId = await createUser(userData);
+    console.log('Form Data in registerUser server action', formData);
 
-    // Generate token and set cookie
-    const token = generateToken(userId.toString());
-    setAuthCookie(token);
+    const { username, email, password } = rawData;
 
-    return NextResponse.json({ success: true, userId }, { status: 201 });
+    const connection = await db.$connect();
+    console.log(connection);
+
+    await getExistingUser(username, email, 'register');
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await db.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+        createdAt: new Date(),
+      },
+    });
+
+    const response = NextResponse.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isBlocked: user.isBlocked,
+      isDeleted: user.isDeleted,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+
+    const token = (await generateToken(user.id, user)) as string;
+
+    (await cookies()).set('token', token, {
+      // Adjust token generation
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    console.log('Form Data in registerUser server action', formData);
+    return response;
   } catch (error) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      { error: "Failed to register user" },
-      { status: 500 }
-    );
+    console.error('Registration error:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

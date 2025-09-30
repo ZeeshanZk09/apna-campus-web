@@ -1,0 +1,48 @@
+
+model Institute {
+  id        String   @id @default(uuid())
+  name      String
+  logo      String?
+  timezone  String?  @default("UTC")
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts        Post[]
+  comments     Comment[]
+  departments  Department[]
+  programs     Program[]
+  courses      Course[]
+  cohorts      Cohort[]
+  assets       Asset[]
+  settings     Setting?
+  Fee          Fee[]
+  Conversation Conversation[]
+  Notification Notification[]
+  Integration  Integration[]
+}
+
+model Setting {
+  id          String   @id @default(uuid())
+  instituteId String   @unique
+  key         String
+  value       Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  institute Institute @relation(fields: [instituteId], references: [id])
+}
+
+model Integration {
+  id          String   @id @default(uuid())
+  instituteId String
+  provider    String
+  config      Json
+  enabled     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  institute Institute @relation(fields: [instituteId], references: [id])
+
+  @@index([instituteId, provider])
+}

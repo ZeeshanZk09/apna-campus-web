@@ -1,0 +1,63 @@
+model Cohort {
+  id          String    @id @default(uuid())
+  instituteId String
+  programId   String?
+  name        String
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  institute   Institute    @relation(fields: [instituteId], references: [id])
+  program     Program?     @relation(fields: [programId], references: [id])
+  enrollments Enrollment[]
+  classrooms  Classroom[]
+
+  @@unique([instituteId, name])
+  @@index([instituteId])
+}
+
+model Classroom {
+  id        String   @id @default(uuid())
+  cohortId  String?
+  name      String
+  capacity  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cohort Cohort? @relation(fields: [cohortId], references: [id])
+}
+
+model Enrollment {
+  id         String           @id @default(uuid())
+  cohortId   String
+  userId     String
+  status     EnrollmentStatus @default(ACTIVE)
+  enrolledAt DateTime         @default(now())
+  leftAt     DateTime?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @default(now())
+
+  cohort     Cohort       @relation(fields: [cohortId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
+  Attendance Attendance[]
+  ExamResult ExamResult[]
+  Invoice    Invoice[]
+
+  @@unique([cohortId, userId])
+  @@index([userId])
+}
+
+model Attendance {
+  id           String           @id @default(uuid())
+  enrollmentId String
+  date         DateTime
+  status       AttendanceStatus @default(PRESENT)
+  note         String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @default(now())
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+
+  @@index([enrollmentId, date])
+}

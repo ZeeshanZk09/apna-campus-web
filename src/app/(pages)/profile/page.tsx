@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Loader from '@/components/ui/Loader';
 import PasswordForm from '@/components/profile/PasswordForm';
 import ProfileForm from '@/components/profile/ProfileForm';
-import { User } from '@/app/lib/models/User';
 import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
+import { User } from '@/app/generated/prisma/client/browser';
+import { fetchUser } from '@/app/actions/getUser';
 
 interface FormatDateInput {
   toString?: () => string;
@@ -42,22 +42,15 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/current-user');
-        if (!response.ok) throw new Error('Failed to fetch user');
-        const data = await response.json();
-        setUser(data.user);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch user');
-        router.push('/login');
-      } finally {
-        setLoading(false);
-      }
+    const loadUser = async () => {
+      const { user, loading } = await fetchUser();
+      // console.log('useEffect: ', user, loading, fetchUser);
+      setUser(user ?? null);
+      setLoading(loading as boolean);
     };
 
-    fetchUser();
-  }, [router]);
+    loadUser();
+  }, []);
 
   const handleCoverPicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -155,9 +148,9 @@ export default function ProfilePage() {
     );
   }
 
-  console.log('Raw createdAt value:', user?.createdAt);
-  console.log('Type of createdAt:', typeof user?.createdAt);
-  console.log('Date conversion test:', new Date(user!.createdAt));
+  // console.log('Raw createdAt value:', user?.createdAt);
+  // console.log('Type of createdAt:', typeof user?.createdAt);
+  // console.log('Date conversion test:', new Date(user!.createdAt));
 
   if (!user) {
     return <div>Not authenticated</div>;
@@ -167,19 +160,7 @@ export default function ProfilePage() {
     <div className='min-h-screen bg-transparent'>
       <div className='shadow'>
         <div className='px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center py-6'>
-            <h1 className='text-3xl font-bold'>Profile</h1>
-            <div className='flex space-x-4'>
-              {user.isAdmin && (
-                <Link
-                  href='/admin/dashboard'
-                  className='px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700'
-                >
-                  Admin Dashboard
-                </Link>
-              )}
-            </div>
-          </div>
+          <h1 className='text-3xl font-bold'>Profile</h1>
         </div>
       </div>
 
@@ -321,11 +302,6 @@ export default function ProfilePage() {
                 <h2 className='text-lg sm:text-2xl font-bold'>{user.username}</h2>
                 <p>{user.email}</p>
                 <p> Joined at {user?.createdAt ? formatDate(user.createdAt) : 'N/A'}</p>
-                {user.isAdmin && (
-                  <span className='inline-block mt-2 px-3 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full'>
-                    Admin
-                  </span>
-                )}
               </div>
             </div>
           </div>
@@ -390,7 +366,7 @@ export default function ProfilePage() {
             <h3 className='text-lg font-medium mb-4'>Update Profile</h3>
             <ProfileForm
               user={{
-                _id: user._id,
+                id: user.id,
                 username: user.username,
                 email: user.email,
                 profilePic: user.profilePic,
@@ -398,7 +374,7 @@ export default function ProfilePage() {
                 password: user.password,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
-                isAdmin: user.isAdmin,
+                role: user.role,
               }}
             />
           </div>

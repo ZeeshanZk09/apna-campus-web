@@ -1,48 +1,59 @@
-"use client";
-import React from "react";
-import { useTheme } from "@/hooks/ThemeChanger";
+'use client';
+import React, { forwardRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useTheme } from '@/hooks/ThemeChanger';
 
-const GetStart = () => {
-  const { isDarkMode } = useTheme();
+type Props = { onClick?: any; children?: React.ReactNode; className?: string };
 
-  return (
-    <div className="relative">
-      <button className="relative h-[76px] px-[30px] bg-transparent border-none outline-none cursor-pointer group">
-        {/* Outer border - before */}
-        <span
+const GetStartMotion = forwardRef<HTMLButtonElement, Props>(
+  ({ children = 'Browse Courses', onClick, className }, ref) => {
+    const { isDarkMode } = useTheme();
+    const reduceMotion = useReducedMotion();
+
+    return (
+      <motion.button
+        ref={ref}
+        type='button'
+        onClick={onClick}
+        className={`relative inline-flex items-center justify-center h-[76px] px-[30px] rounded-full group focus:outline-none focus-visible:ring-4 focus-visible:ring-[#00ffea]/20 ${
+          className ?? ''
+        }`}
+        whileHover={reduceMotion ? {} : { scale: 1.01 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 1, scale: 1 }}
+          whileHover={reduceMotion ? {} : { opacity: 0, scale: 0.75 }}
+          transition={{ duration: 0.35 }}
           className={`pointer-events-none absolute inset-[7px] rounded-full border-[3px] ${
-            !isDarkMode ? `border-black` : `border-white`
-          } transition-all duration-500 group-hover:opacity-0 group-hover:scale-75`}
+            isDarkMode ? 'border-white' : 'border-black'
+          }`}
         />
 
-        {/* Green hover border - after */}
-        <span className="pointer-events-none absolute inset-[7px] rounded-full border-[4px] border-[#00ffea] scale-[1.3] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-100" />
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 0, scale: 1.3 }}
+          whileHover={reduceMotion ? {} : { opacity: 1, scale: 1 }}
+          transition={{ duration: 0.35 }}
+          className='pointer-events-none absolute inset-[7px] rounded-full border-[4px] border-[#00ffea]'
+        />
 
-        <div className="relative flex items-center gap-2 transition-transform duration-300">
-          <span
-            className={`text-[16px] font-semibold ${
-              isDarkMode ? `text-white` : `text-black`
-            }  z-10`}
-          >
-            Browse Courses
+        <span className={`relative z-10 flex items-center gap-2`}>
+          <span className={isDarkMode ? 'text-white font-semibold' : 'text-black font-semibold'}>
+            {children}
           </span>
+          <svg viewBox='0 0 24 24' role='img' className='w-6 h-6' aria-hidden>
+            <path
+              fill={isDarkMode ? 'white' : 'black'}
+              d='M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z'
+            />
+          </svg>
+        </span>
+      </motion.button>
+    );
+  }
+);
 
-          <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-6 h-6 flex items-center justify-center rotate-180">
-            <svg
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full group-hover:translate-x-[2px] transition-transform duration-300"
-            >
-              <path
-                fill={isDarkMode ? `white` : `black`}
-                d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
-              />
-            </svg>
-          </span>
-        </div>
-      </button>
-    </div>
-  );
-};
-
-export default GetStart;
+GetStartMotion.displayName = 'GetStartMotion';
+export default GetStartMotion;

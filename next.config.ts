@@ -1,6 +1,10 @@
 import type { NextConfig } from 'next';
-
+// import { createStyledComponentsTransformer } from 'babel-plugin-styled-components';
+const isProduction = process.env.NODE_ENV === 'production';
 const nextConfig: NextConfig = {
+  experimental: {
+    globalNotFound: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -10,6 +14,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
+    if (!isProduction) return [];
     return [
       {
         source: '/:path*',
@@ -32,4 +37,6 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
 };
 
+// const {  } = require('babel-plugin-styled-components');
+// createStyledComponentsTransformer;
 export default nextConfig;

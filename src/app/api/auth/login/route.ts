@@ -1,87 +1,67 @@
 // app/api/auth/login/route.ts
-import { NextResponse } from "next/server";
-import { findUserByEmail, comparePasswords } from "@/app/lib/models/User";
-import { generateToken } from "@/app/lib/utils/auth";
+import { User } from '@/app/generated/prisma/client/client';
+import generateToken from '@/app/actions/generateToken';
+import { ApiError } from '@/utils/NextApiError';
+import { getExistingUser } from '@/utils/authHelpers';
+import { compare } from 'bcryptjs';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
-export const dynamic = "force-dynamic"; // Prevent static optimization
+export const dynamic = 'force-dynamic'; // Prevent static optimization
 
 export async function POST(request: Request) {
   try {
-    // Verify content type
-    const contentType = request.headers.get("content-type");
-    if (!contentType?.includes("application/json")) {
-      return NextResponse.json(
-        { error: "Invalid content type" },
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    const formData = await request.formData();
 
-    // Parse body
-    const { email, password } = await request.json();
+    const rawData = {
+      username: formData.get('username') as string,
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    };
 
-    // Input validation
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
-    }
+    console.log('Form Data in loginUser server action', formData);
 
-    // Find user
-    const user = await findUserByEmail(email);
-    if (!user) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
+    const { username, email, password } = rawData;
+
+    const user = (await getExistingUser(username, email, 'login')) as User;
 
     // Verify password
-    const isMatch = await comparePasswords(password, user.password);
+    const isMatch = await compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Generate token
-    const token = generateToken(user._id.toString(), user.isAdmin);
+    const token = (await generateToken(user.id, user)) as string;
 
     // Create response
     const response = NextResponse.json(
       {
         success: true,
         user: {
-          _id: user._id,
+          id: user.id,
           username: user.username,
           email: user.email,
-          isAdmin: user.isAdmin,
-        },
+          role: user.role,
+        } as User,
       },
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       }
     );
 
     // Set cookie
-    response.cookies.set({
-      name: "token",
-      value: token,
+    (await cookies()).set('token', token, {
+      // Adjust token generation
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      secure: true,
+      sameSite: 'strict',
     });
 
     return response;
   } catch (error) {
-    console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error('Login error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,0 +1,32 @@
+{
+  "name": "Apna Campus - Portfolio App",
+  "short_name": "Apna Campus",
+  "description": "Portfolio showcasing educational projects and campus initiatives",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f9ff",
+  "theme_color": "#0066cc",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
