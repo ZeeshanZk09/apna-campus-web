@@ -115,7 +115,9 @@ export default function RootLayout({
       <head>
         <StructuredData data={organizationStructuredData} />
       </head>
-      <GoogleAnalytics />
+      <Suspense fallback={<Loading />}>
+        <GoogleAnalytics />
+      </Suspense>
       <body
         className={`transition-all duration-300 antialiased bg-gradient-to-b from-[#f5f9ff] to-[#e6f0ff] dark:bg-[#081015]`}
         suppressHydrationWarning
