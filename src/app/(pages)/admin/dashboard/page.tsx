@@ -7,7 +7,7 @@ import UsersTable from '@/components/admin/Users.Table';
 import Loader from '@/components/ui/Loader';
 import { User } from '@/app/generated/prisma/client/browser';
 
-export default function AdminDashboard(props) {
+export default function AdminDashboard(props: string) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
