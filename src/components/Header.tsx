@@ -22,7 +22,7 @@ const HeaderForDesktop = () => {
       const { user, loading } = await fetchUser();
       // console.log('useEffect: ', user, loading, fetchUser);
       setUser(user ?? null);
-      setLoading(loading);
+      setLoading(loading!);
     };
 
     loadUser();
