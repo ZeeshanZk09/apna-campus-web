@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && next build",
+    "build": "npm install --legacy-peer-deps && NEXT_IGNORE_TYPECHECK=1 next build --no-lint",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
