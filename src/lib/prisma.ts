@@ -3,6 +3,12 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 import { neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 import { withOptimize } from '@prisma/extension-optimize';
+import {
+  GlobalOmitConfig,
+  TypeMap,
+  TypeMapCb,
+} from '@/app/generated/prisma/client/internal/prismaNamespace';
+import { DynamicClientExtensionThis, InternalArgs } from '@prisma/client/runtime/client';
 
 // Set WebSocket constructor for Neon (required for serverless)
 neonConfig.webSocketConstructor = ws;
@@ -27,12 +33,37 @@ function createBasePrisma(): PrismaClient {
 const basePrisma = createBasePrisma();
 
 // Optionally extend only in non-production (Optimize is for dev only)
-const prisma = basePrisma;
-
-// const prisma =
-//   process.env.NODE_ENV !== 'production' && process.env.OPTIMIZE_API_KEY
-//     ? basePrisma.$extends(withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY }))
-//     : basePrisma;
+// const prisma = basePrisma;
+export type PrismaType =
+  | PrismaClient
+  | DynamicClientExtensionThis<
+      TypeMap<
+        InternalArgs & {
+          result: {};
+          model: {};
+          query: {};
+          client: {};
+        },
+        GlobalOmitConfig | undefined
+      >,
+      TypeMapCb<GlobalOmitConfig | undefined>,
+      {
+        result: {};
+        model: {};
+        query: {};
+        client: {};
+      }
+    >;
+let prisma: PrismaType;
+try {
+  prisma =
+    process.env.NODE_ENV !== 'production' && process.env.OPTIMIZE_API_KEY!
+      ? basePrisma.$extends(withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY! }))
+      : basePrisma;
+} catch (error) {
+  prisma = basePrisma;
+  console.log(error);
+}
 
 // Dev hot-reload guard
 declare global {
@@ -42,11 +73,11 @@ declare global {
 
 if (process.env.NODE_ENV !== 'production') {
   if (!global.__prisma) {
-    global.__prisma = prisma;
+    global.__prisma = prisma as PrismaType;
   }
 }
 
-const db = process.env.NODE_ENV === 'production' ? prisma : global.__prisma;
+const db = process.env.NODE_ENV === 'production' ? (prisma as PrismaType) : global.__prisma;
 
 export default db;
 export type Prisma = typeof db;

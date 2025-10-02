@@ -1,5 +1,4 @@
 import db from '@/lib/prisma';
-import { userSchema } from '@/lib/validators/userValidator';
 import generateToken from '@/app/actions/generateToken';
 import { getExistingUser } from '@/utils/authHelpers';
 import bcrypt from 'bcryptjs';
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest) {
     const connection = await db.$connect();
     console.log(connection);
 
-    await getExistingUser({username, email, term: 'register'});
+    await getExistingUser({ username, email, term: 'register' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

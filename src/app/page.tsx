@@ -48,11 +48,6 @@ export default function HomeHero() {
 
               {/* CTA Row */}
               <div className='mt-6 flex items-center gap-4 flex-wrap'>
-                {/* Primary CTA: use your GetStart component */}
-                <div>
-                  <GetStart />
-                </div>
-
                 {/* Secondary CTA */}
                 <Link
                   href='#courses'
@@ -122,8 +117,6 @@ export default function HomeHero() {
               <div className='w-full max-w-md'>
                 <div className='relative rounded-2xl overflow-hidden shadow-2xl backdrop-blur p-4'>
                   <div className='aspect-[4/5] w-full'>
-                    {/* Respect reduced motion */}
-                    {/* {!prefersReducedMotion ? ( */}
                     <DotLottieReact
                       src='https://lottie.host/35e0b9a5-364d-4f31-b2b7-5c744cc0b0ff/nUeOXrYiV6.lottie'
                       autoplay
@@ -132,12 +125,9 @@ export default function HomeHero() {
                       aria-hidden={false}
                       title='Hero animation'
                     />
-                    {/* ) : (
-                      // fallback static image or custom component
-                      <div className='w-full h-full relative'>
-                        <HeroImgUI />
-                      </div>
-                    )} */}
+                  </div>
+                  <div className='mt-3 text-xs text-gray-500 text-center'>
+                    Interactive preview · lightweight
                   </div>
                 </div>
               </div>
