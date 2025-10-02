@@ -7,7 +7,7 @@ import { compare } from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic'; // Prevent static optimization
+export const dynamic = 'force-dynamic'; 
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     const { username, email, password } = rawData;
 
-    const user = (await getExistingUser(username, email, 'login')) as User;
+    const user = (await getExistingUser({username, email, term: "login"})) as User;
 
     // Verify password
     const isMatch = await compare(password, user.password);

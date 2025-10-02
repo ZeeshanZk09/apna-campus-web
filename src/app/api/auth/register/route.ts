@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const connection = await db.$connect();
     console.log(connection);
 
-    await getExistingUser(username, email, 'register');
+    await getExistingUser({username, email, term: 'register'});
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

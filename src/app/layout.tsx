@@ -131,7 +131,7 @@ export default function RootLayout({
                       Skip to main content
                     </Link> */}
                   <HeaderForDesktop />
-                  <main id='main-content' tabIndex={-1}>
+                  <main id='min-h-screen main-content' tabIndex={-1}>
                     {children}
                   </main>
                   <ThemeButton />

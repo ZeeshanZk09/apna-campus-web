@@ -10,11 +10,12 @@ import Logout from './ui/Logout';
 import Hamburger from './ui/Hamburger';
 import { User } from '@/app/generated/prisma/client/browser';
 import { fetchUser } from '@/app/actions/getUser';
+import axios from 'axios';
 const HeaderForDesktop = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sideBar, setSideBar] = useState(false);
-  // const router = useRouter();
+  const router = useRouter();
 
   console.log(sideBar);
   useEffect(() => {
@@ -36,7 +37,15 @@ const HeaderForDesktop = () => {
 
   console.log(user);
 
-  const handleLogout = () => {};
+  const handleLogout = async () => {
+    try {
+      const result = await axios.post('/api/auth/logout');
+      console.log(result);
+      router.push("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (loading) return null;
   return (
@@ -82,9 +91,7 @@ const HeaderForDesktop = () => {
           <>
             <Link href='/profile'>Profile</Link>
             {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
-            <button className='scale-75' onClick={handleLogout}>
-              <Logout />
-            </button>
+              <Logout handleClick={handleLogout} />
           </>
         ) : (
           <>

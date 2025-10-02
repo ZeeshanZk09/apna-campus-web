@@ -153,7 +153,7 @@ export default function ProfilePage() {
   // console.log('Date conversion test:', new Date(user!.createdAt));
 
   if (!user) {
-    return <div>Not authenticated</div>;
+    return <div className='min-h-screen'>Not authenticated</div>;
   }
 
   return (
