@@ -15,9 +15,10 @@ A **Next.js** based web application for managing student records, attendance, an
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes
-- **Database**: MongoDB Atlas
+- **Database**: Neon Postgres db
+- **ORM**: Prisma
 - **Authentication**: NextAuth.js
-- **Deployment**: Vercel
+- **Deployment**: Netlify
 
 ## 🔧 Setup & Installation
 
