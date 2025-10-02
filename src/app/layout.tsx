@@ -11,6 +11,7 @@ import GoogleAnalytics from '@/components/GoogleAnalytics';
 import DynamicBackground from '@/components/ui/Bg';
 import AppProviders from '@/lib/provider/AppProvider';
 import '@/styles/globals.css';
+import { OptimizedHydrationFix } from '@/utils/HydrationFix';
 // Organization schema for structured data
 const organizationStructuredData = {
   '@context': 'https://schema.org',
@@ -125,19 +126,14 @@ export default function RootLayout({
         <AppProviders>
           <PageTransition>
             <ThemeProvider>
-              <Suspense fallback={<Loading />}>
-                <DynamicBackground>
-                  {/* <Link href='#main-content' className='skip-to-main-content'>
-                      Skip to main content
-                    </Link> */}
-                  <HeaderForDesktop />
-                  <main id='min-h-screen main-content' tabIndex={-1}>
-                    {children}
-                  </main>
-                  <ThemeButton />
-                  <Footer />
-                </DynamicBackground>
-              </Suspense>
+              <DynamicBackground>
+                <HeaderForDesktop />
+                <main id='min-h-screen main-content' tabIndex={-1}>
+                  {children}
+                </main>
+                <ThemeButton />
+                <Footer />
+              </DynamicBackground>
             </ThemeProvider>
           </PageTransition>
         </AppProviders>

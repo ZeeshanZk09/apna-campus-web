@@ -1,4 +1,5 @@
-"use client";
+'use client';
+import { useHydrationFix } from '@/utils/HydrationFix';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -11,6 +12,10 @@ export default function Bg({ children }: { children: React.ReactNode }) {
       />
     ),
   });
+
+  const isHydrated = useHydrationFix(1000);
+
+  if (!isHydrated) return null;
 
   return <DynamicBackground>{children}</DynamicBackground>;
 }

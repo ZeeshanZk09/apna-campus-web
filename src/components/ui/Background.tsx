@@ -1,8 +1,9 @@
 'use client';
 import { useTheme } from '@/hooks/ThemeChanger';
 import { HydrationFix } from '@/utils/HydrationFix';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styled from 'styled-components';
+
 interface BackgroundProps {
   children: React.ReactNode;
 }
@@ -10,16 +11,15 @@ interface BackgroundProps {
 const Background = ({ children }: BackgroundProps) => {
   const { isDarkMode } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>(0);
   const [documentHeight, setDocumentHeight] = useState(0);
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
 
-  // Calculate document height
-  const calculateDocumentHeight = () => {
+  const calculateDocumentHeight = useCallback(() => {
     if (typeof document === 'undefined') return 0;
-
     return Math.max(
       document.body.scrollHeight,
       document.documentElement.scrollHeight,
@@ -28,9 +28,8 @@ const Background = ({ children }: BackgroundProps) => {
       document.body.clientHeight,
       document.documentElement.clientHeight
     );
-  };
+  }, []);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -42,16 +41,12 @@ const Background = ({ children }: BackgroundProps) => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [calculateDocumentHeight]);
 
-  // Effect for setting up observers and calculating document height
   useEffect(() => {
-    // Initial height calculation
     setDocumentHeight(calculateDocumentHeight());
 
-    // Only set up observers in browser environment
     if (typeof document !== 'undefined') {
-      // MutationObserver to detect DOM changes that might affect height
       const observer = new MutationObserver(() => {
         setDocumentHeight(calculateDocumentHeight());
       });
@@ -59,11 +54,8 @@ const Background = ({ children }: BackgroundProps) => {
       observer.observe(document.body, {
         childList: true,
         subtree: true,
-        attributes: true,
-        characterData: true,
       });
 
-      // Resize observer for window resizing
       const resizeObserver = new ResizeObserver(() => {
         setDocumentHeight(calculateDocumentHeight());
       });
@@ -75,158 +67,320 @@ const Background = ({ children }: BackgroundProps) => {
         resizeObserver.disconnect();
       };
     }
-  }, []);
+  }, [calculateDocumentHeight]);
 
-  // Effect for canvas animation
   useEffect(() => {
     if (!canvasRef.current || documentHeight === 0) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
-    // Set canvas dimensions
-    canvas.width = windowSize.width;
-    canvas.height = documentHeight;
+    // Set canvas dimensions with device pixel ratio for sharp rendering
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = windowSize.width * dpr;
+    canvas.height = documentHeight * dpr;
+    canvas.style.width = `${windowSize.width}px`;
+    canvas.style.height = `${documentHeight}px`;
+    ctx.scale(dpr, dpr);
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Enhanced snowflakes
+    const snowflakes: {
+      x: number;
+      y: number;
+      size: number;
+      speed: number;
+      drift: number;
+      opacity: number;
+      wobble: number;
+      wobbleSpeed: number;
+      initialY: number;
+    }[] = [];
 
-    // Set background based on theme
-    if (isDarkMode) {
-      ctx.fillStyle = '#020207';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    } else {
-      // Light mode background with subtle gradient
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, '#e6f0ff');
-      gradient.addColorStop(1, '#cfe2ff');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const snowCount = Math.min(40, Math.floor(windowSize.width / 45));
+
+    for (let i = 0; i < snowCount; i++) {
+      const initialY = (Math.random() * canvas.height) / dpr;
+      snowflakes.push({
+        x: Math.random() * windowSize.width,
+        y: initialY,
+        size: Math.random() * 2 + 0.5,
+        speed: Math.random() * 0.4 + 0.15,
+        drift: Math.random() * 0.3 - 0.15,
+        opacity: Math.random() * 0.5 + 0.2,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: Math.random() * 0.02 + 0.01,
+        initialY: initialY,
+      });
     }
 
-    // Meteor particles
+    // Optimized meteors
     const meteors: {
       x: number;
       y: number;
       length: number;
       speed: number;
       size: number;
-      delay: number;
+      active: boolean;
       alpha: number;
-      color: string;
+      trailColor: string;
+      headColor: string;
+      particles: Array<{ x: number; y: number; life: number; size: number }>;
     }[] = [];
-    const meteorCount = Math.min(40, Math.floor(windowSize.width / 30));
 
-    // Initialize meteors with different colors based on theme
-    for (let i = 0; i < meteorCount; i++) {
-      meteors.push({
-        x: Math.random() * canvas.width * 1.2,
-        y: Math.random() * canvas.height,
-        length: Math.random() * 30 + 20,
-        speed: Math.random() * 2 + 1.5,
-        size: Math.random() * 0.8 + 0.3,
-        delay: Math.random() * 50,
-        alpha: Math.random() * 0.7 + 0.3,
-        color: isDarkMode
-          ? `rgba(150, 220, 255, ${Math.random() * 0.7 + 0.3})`
-          : `rgba(70, 130, 255, ${Math.random() * 0.5 + 0.2})`, // More subtle in light mode
-      });
-    }
-
-    let animationFrameId: number;
+    let nextMeteorTime = Math.random() * 200 + 120;
     let time = 0;
+
+    const createMeteor = () => {
+      const startX = windowSize.width + Math.random() * 100;
+      const startY = Math.random() * (windowSize.height * 0.3);
+
+      meteors.push({
+        x: startX,
+        y: startY,
+        length: Math.random() * 80 + 60,
+        speed: Math.random() * 3 + 4,
+        size: Math.random() * 2.2 + 1.5,
+        active: true,
+        alpha: Math.random() * 0.2 + 0.8,
+        trailColor: isDarkMode
+          ? `rgba(255, 220, 150, ${Math.random() * 0.2 + 0.7})`
+          : `rgba(80, 140, 255, ${Math.random() * 0.3 + 0.6})`,
+        headColor: isDarkMode ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.9)',
+        particles: [],
+      });
+    };
+
+    const drawBackground = () => {
+      if (isDarkMode) {
+        const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / dpr);
+        bgGradient.addColorStop(0, '#020207');
+        bgGradient.addColorStop(0.5, '#0a0a15');
+        bgGradient.addColorStop(1, '#050510');
+        ctx.fillStyle = bgGradient;
+      } else {
+        const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / dpr);
+        bgGradient.addColorStop(0, '#e6f0ff');
+        bgGradient.addColorStop(0.5, '#d5e5ff');
+        bgGradient.addColorStop(1, '#cfe2ff');
+        ctx.fillStyle = bgGradient;
+      }
+      ctx.fillRect(0, 0, windowSize.width, canvas.height / dpr);
+    };
+
+    drawBackground();
 
     const animate = () => {
       time++;
 
-      // Clear with appropriate background based on theme
-      if (isDarkMode) {
-        // Dark mode: use subtle fade effect
-        ctx.fillStyle = 'rgba(8, 8, 12, 0.15)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      } else {
-        // Light mode: clear with light gradient
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, '#e6f0ff');
-        gradient.addColorStop(1, '#cfe2ff');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+      // Fade effect instead of full clear
+      ctx.fillStyle = isDarkMode ? 'rgba(2, 2, 7, 0.12)' : 'rgba(230, 240, 255, 0.1)';
+      ctx.fillRect(0, 0, windowSize.width, canvas.height / dpr);
 
-      // Draw stars only in dark mode
-      if (isDarkMode && time % 100 === 0) {
+      // Twinkling stars (dark mode only)
+      if (isDarkMode && time % 90 === 0) {
         for (let i = 0; i < 5; i++) {
-          ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.2})`;
-          ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
+          const x = Math.random() * windowSize.width;
+          const y = Math.random() * (canvas.height / dpr);
+          const brightness = Math.random() * 0.3 + 0.1;
+          const size = Math.random() > 0.6 ? 2 : 1;
+
+          ctx.shadowBlur = 3;
+          ctx.shadowColor = `rgba(255, 255, 255, ${brightness})`;
+          ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+          ctx.fillRect(x, y, size, size);
+          ctx.shadowBlur = 0;
         }
       }
 
-      // Add subtle particles for light mode
-      if (!isDarkMode && time % 80 === 0) {
-        for (let i = 0; i < 3; i++) {
-          ctx.fillStyle = `rgba(180, 210, 255, ${Math.random() * 0.1})`;
-          ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1.5, 1.5);
-        }
-      }
+      // Draw and update snowflakes with improved rendering
+      snowflakes.forEach((flake) => {
+        ctx.save();
+        ctx.globalAlpha = flake.opacity * (0.7 + Math.sin(time * 0.02 + flake.wobble) * 0.3);
 
-      // Update and draw meteors
-      meteors.forEach((meteor) => {
-        if (time < meteor.delay) return;
-
-        ctx.beginPath();
-        const gradient = ctx.createLinearGradient(
-          meteor.x,
-          meteor.y,
-          meteor.x - meteor.length * 0.6,
-          meteor.y + meteor.length
+        // Snowflake with better glow
+        const gradient = ctx.createRadialGradient(
+          flake.x,
+          flake.y,
+          0,
+          flake.x,
+          flake.y,
+          flake.size * 3
         );
 
         if (isDarkMode) {
-          gradient.addColorStop(0, meteor.color);
-          gradient.addColorStop(
-            0.3,
-            meteor.color.replace(/[\d\.]+\)$/, parseFloat(meteor.color.split(',')[3]) * 0.7 + ')')
-          );
+          gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+          gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
         } else {
-          // Light mode gradient - more subtle blue shades
-          gradient.addColorStop(0, meteor.color);
-          gradient.addColorStop(
-            0.3,
-            meteor.color.replace(/[\d\.]+\)$/, parseFloat(meteor.color.split(',')[3]) * 0.5 + ')')
-          );
+          gradient.addColorStop(0, 'rgba(230, 240, 255, 0.9)');
+          gradient.addColorStop(0.5, 'rgba(200, 220, 255, 0.4)');
+          gradient.addColorStop(1, 'rgba(200, 220, 255, 0)');
         }
-        gradient.addColorStop(1, 'transparent');
 
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = meteor.size;
-        ctx.moveTo(meteor.x, meteor.y);
-        ctx.lineTo(meteor.x - meteor.length * 0.6, meteor.y + meteor.length);
-        ctx.stroke();
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(flake.x, flake.y, flake.size * 2, 0, Math.PI * 2);
+        ctx.fill();
 
-        meteor.y += meteor.speed;
-        meteor.x -= meteor.speed * 0.6;
+        ctx.restore();
 
-        // Reset meteor when it goes off screen
-        if (meteor.y > canvas.height + meteor.length || meteor.x < -meteor.length) {
-          meteor.y = Math.random() * -100;
-          meteor.x = Math.random() * canvas.width * 1.1;
-          meteor.length = Math.random() * 30 + 20;
-          meteor.delay = time + Math.random() * 30 + 10;
-          meteor.alpha = Math.random() * 0.7 + 0.3;
-          meteor.color = isDarkMode
-            ? `rgba(150, 220, 255, ${meteor.alpha})`
-            : `rgba(70, 130, 255, ${meteor.alpha * 0.7})`; // More subtle in light mode
+        // Enhanced physics
+        flake.wobble += flake.wobbleSpeed;
+        flake.y += flake.speed;
+        flake.x += flake.drift + Math.sin(flake.wobble) * 0.5;
+
+        // Wrap around screen
+        if (flake.y > canvas.height / dpr + 20) {
+          flake.y = -20;
+          flake.x = Math.random() * windowSize.width;
+          flake.opacity = Math.random() * 0.5 + 0.2;
         }
+        if (flake.x > windowSize.width + 20) flake.x = -20;
+        if (flake.x < -20) flake.x = windowSize.width + 20;
       });
 
-      animationFrameId = requestAnimationFrame(animate);
+      // Create meteors at intervals
+      if (time >= nextMeteorTime) {
+        createMeteor();
+        nextMeteorTime = time + Math.random() * 200 + 120;
+      }
+
+      // Draw and update meteors with particle trails
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const meteor = meteors[i];
+        if (!meteor.active) continue;
+
+        ctx.save();
+
+        // Add sparkle particles
+        if (time % 2 === 0) {
+          meteor.particles.push({
+            x: meteor.x,
+            y: meteor.y,
+            life: 1,
+            size: Math.random() * 1.5 + 0.5,
+          });
+        }
+
+        // Draw particles
+        meteor.particles.forEach((particle, pIndex) => {
+          if (particle.life <= 0) {
+            meteor.particles.splice(pIndex, 1);
+            return;
+          }
+
+          ctx.globalAlpha = particle.life;
+          const pGradient = ctx.createRadialGradient(
+            particle.x,
+            particle.y,
+            0,
+            particle.x,
+            particle.y,
+            particle.size * 2
+          );
+          pGradient.addColorStop(0, meteor.headColor);
+          pGradient.addColorStop(1, 'transparent');
+
+          ctx.fillStyle = pGradient;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+
+          particle.life -= 0.02;
+        });
+
+        // Main meteor trail with tapered shape (thick head to thin tail)
+        const tailX = meteor.x - meteor.length * 1.4;
+        const tailY = meteor.y + meteor.length * 1;
+
+        // Draw multiple layers for tapered effect
+        const segments = 15;
+        for (let seg = 0; seg < segments; seg++) {
+          const progress = seg / segments;
+          const nextProgress = (seg + 1) / segments;
+
+          const currentX = meteor.x - meteor.length * 1.4 * progress;
+          const currentY = meteor.y + meteor.length * 1 * progress;
+          const nextX = meteor.x - meteor.length * 1.4 * nextProgress;
+          const nextY = meteor.y + meteor.length * 1 * nextProgress;
+
+          // Thickness tapers from head (thick) to tail (thin)
+          const thickness = meteor.size * (1 - progress * 0.85);
+
+          // Color fades from bright to transparent
+          let alpha = meteor.alpha * (1 - progress * 0.7);
+          const segmentGradient = ctx.createLinearGradient(currentX, currentY, nextX, nextY);
+
+          if (progress < 0.1) {
+            segmentGradient.addColorStop(0, meteor.headColor);
+            segmentGradient.addColorStop(1, meteor.trailColor);
+          } else {
+            const startAlpha = alpha;
+            const endAlpha = alpha * 0.7;
+            segmentGradient.addColorStop(
+              0,
+              meteor.trailColor.replace(/[\d\.]+\)$/, `${startAlpha})`)
+            );
+            segmentGradient.addColorStop(
+              1,
+              meteor.trailColor.replace(/[\d\.]+\)$/, `${endAlpha})`)
+            );
+          }
+
+          ctx.strokeStyle = segmentGradient;
+          ctx.lineWidth = Math.max(thickness, 0.3);
+          ctx.lineCap = 'round';
+
+          ctx.beginPath();
+          ctx.moveTo(currentX, currentY);
+          ctx.lineTo(nextX, nextY);
+          ctx.stroke();
+        }
+
+        // Enhanced head glow
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = meteor.headColor;
+
+        const glowGradient = ctx.createRadialGradient(
+          meteor.x,
+          meteor.y,
+          0,
+          meteor.x,
+          meteor.y,
+          meteor.size * 4
+        );
+        glowGradient.addColorStop(0, meteor.headColor);
+        glowGradient.addColorStop(0.3, meteor.trailColor);
+        glowGradient.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, meteor.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.restore();
+
+        // Update position
+        meteor.x -= meteor.speed * 1.4;
+        meteor.y += meteor.speed * 1;
+
+        // Remove when off screen
+        if (meteor.x < -meteor.length * 3 || meteor.y > canvas.height / dpr + meteor.length * 2) {
+          meteors.splice(i, 1);
+        }
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
     };
 
     animate();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
   }, [isDarkMode, documentHeight, windowSize]);
 
@@ -259,6 +413,7 @@ const StyledWrapper = styled.div<{ $isDarkMode: boolean }>`
     width: 100%;
     height: 100%;
     z-index: 0;
+    pointer-events: none;
   }
 `;
 
