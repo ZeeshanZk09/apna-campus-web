@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
 import UsersTable from '@/components/admin/Users.Table';
 import Loader from '@/components/ui/Loader';
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 
-export default function AdminDashboard(props: any) {
+export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

@@ -3,7 +3,7 @@
 import { cookies, headers } from 'next/headers';
 import db from '@/lib/prisma';
 import { decodeProtectedHeader } from 'jose';
-import type { User } from '../generated/prisma/client/client';
+import type { User } from '@/app/generated/prisma/client';
 import { createAccessToken, verifyAccessToken, verifyRefreshToken } from '@/utils/token';
 import { JwtPayload } from 'jsonwebtoken';
 

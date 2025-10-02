@@ -4,13 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && NEXT_IGNORE_TYPECHECK=1 next build --no-lint",
+    "build": "npm install --legacy-peer-deps && next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "prisma:format": "prisma format prisma/schema.prisma",
-    "prisma:validate": "prisma validate --schema=prisma/schema.prisma",
-    "prisma:migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma",
+    "prisma:migrate:dev": "npx prisma migrate dev --schema=prisma/schema.prisma",
     "prisma:generate": "npx prisma generate --schema=prisma/schema.prisma"
   },
   "dependencies": {
@@ -37,6 +35,7 @@
     "pg": "^8.16.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "styled-components": "^6.1.17",

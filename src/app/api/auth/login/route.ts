@@ -1,5 +1,5 @@
 // app/api/auth/login/route.ts
-import { User } from '@/app/generated/prisma/client/client';
+import { User } from '@/app/generated/prisma/client';
 import generateToken from '@/app/actions/generateToken';
 import { ApiError } from '@/utils/NextApiError';
 import { getExistingUser } from '@/utils/authHelpers';

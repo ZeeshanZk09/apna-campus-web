@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLoginUser } from '@/lib/queries/userQueries';
 import { useForm } from '@tanstack/react-form';
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 import { Eye, EyeClosed } from 'lucide-react';
 
 export default function LoginForm() {

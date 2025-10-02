@@ -1,15 +1,20 @@
-import { PrismaClient } from '@/app/generated/prisma/client/client';
+import { PrismaClient } from '@/app/generated/prisma/client';
 // import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 import { withOptimize } from '@prisma/extension-optimize';
+// import {
+//   GlobalOmitConfig,
+//   TypeMap,
+//   TypeMapCb,
+// } from '@/app/generated/prisma/client/internal/prismaNamespace';
+import { DynamicClientExtensionThis, InternalArgs } from '@prisma/client/runtime/client';
 import {
   GlobalOmitConfig,
   TypeMap,
   TypeMapCb,
-} from '@/app/generated/prisma/client/internal/prismaNamespace';
-import { DynamicClientExtensionThis, InternalArgs } from '@prisma/client/runtime/client';
+} from '@/app/generated/prisma/internal/prismaNamespace';
 
 // Set WebSocket constructor for Neon (required for serverless)
 neonConfig.webSocketConstructor = ws;

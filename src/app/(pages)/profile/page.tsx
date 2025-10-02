@@ -7,7 +7,7 @@ import PasswordForm from '@/components/profile/PasswordForm';
 import ProfileForm from '@/components/profile/ProfileForm';
 import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 import { fetchUser } from '@/app/actions/getUser';
 
 interface FormatDateInput {

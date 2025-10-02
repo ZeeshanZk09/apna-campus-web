@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 
 interface UsersTableProps {
   users: User[];

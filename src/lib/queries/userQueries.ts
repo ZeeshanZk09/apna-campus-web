@@ -1,4 +1,4 @@
-import { User } from '@/app/generated/prisma/client/client';
+import { User } from '@/app/generated/prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { getUserById, updateUser, deleteUser } from '@/app/actions/auth';

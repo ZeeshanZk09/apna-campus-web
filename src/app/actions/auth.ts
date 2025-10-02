@@ -4,7 +4,7 @@ import {
   UserCreateInput,
   UserUpdateInput,
   UserWhereUniqueInput,
-} from '@/app/generated/prisma/client/models';
+} from '@/app/generated/prisma/models';
 import db from '@/lib/prisma';
 import { uploadFile } from '@/lib/utils/cloudinary';
 import { NextResponse } from 'next/server';

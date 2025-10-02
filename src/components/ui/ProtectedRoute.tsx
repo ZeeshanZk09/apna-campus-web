@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 // import { User } from "@/app/lib/models/User";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

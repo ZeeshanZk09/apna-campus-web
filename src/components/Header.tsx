@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Logout from './ui/Logout';
 import Hamburger from './ui/Hamburger';
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 import { fetchUser } from '@/app/actions/getUser';
 import axios from 'axios';
 const HeaderForDesktop = () => {
@@ -41,7 +41,7 @@ const HeaderForDesktop = () => {
     try {
       const result = await axios.post('/api/auth/logout');
       console.log(result);
-      router.push("/login");
+      router.push('/login');
     } catch (error) {
       console.error(error);
     }
@@ -89,7 +89,7 @@ const HeaderForDesktop = () => {
           <>
             <Link href='/profile'>Profile</Link>
             {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
-              <Logout handleClick={handleLogout} />
+            <Logout handleClick={handleLogout} />
           </>
         ) : (
           <>

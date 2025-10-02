@@ -1,4 +1,4 @@
-import { User } from '@/app/generated/prisma/client/browser';
+import { User } from '@/app/generated/prisma/browser';
 import { useState, useRef } from 'react';
 
 export default function ProfileForm({ user }: { user: Partial<User> }) {

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useTheme } from '@/hooks/ThemeChanger';
 import { useForm } from '@tanstack/react-form';
 import { useRegisterUser } from '@/lib/queries/userQueries';
-import type { User } from '@/app/generated/prisma/client/client';
+import type { User } from '@/app/generated/prisma/browser';
 import { Eye, EyeClosed } from 'lucide-react';
 
 export default function RegisterForm() {
