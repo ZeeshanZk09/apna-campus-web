@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && next build",
+    "build": "npx prisma generate --schema=prisma/schema.prisma && npm install --legacy-peer-deps && next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
