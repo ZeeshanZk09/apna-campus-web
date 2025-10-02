@@ -46,11 +46,9 @@ const HeaderForDesktop = () => {
       console.error(error);
     }
   };
-
-  if (loading) return null;
   return (
-    <header className='h-fit flex flex-col  px-8  py-2 shadow-md shadow-blue-900 w-screen'>
-      <nav className='px-2 backdrop-blur-3xl items-center flex justify-between w-full  '>
+    <header className='h-fit flex flex-col  px-8  py-2 shadow-sm shadow-blue-500 w-screen'>
+      <nav className='px-2 items-center flex justify-between w-full  '>
         <Image
           className='bg-[radial-gradient(circle,_#081015,_#08101580,_#08101510,_transparent)] flex items-center justify-center  rounded-full w-[4rem] sm:w-[6rem]  object-fill '
           src={`/logo/apna-campus-logo.png`}
@@ -63,7 +61,7 @@ const HeaderForDesktop = () => {
           <div
             className={`z-30 transition-all duration-700 ease-in-out delay-700 transform
           ${sideBar ? 'translate-x-0 scale-100 opacity-100' : 'translate-x-full scale-0 opacity-0'}
-            lg:hidden absolute top-0 left-0 right-0  w-full p-3 sm:max-w-sm  bg-[#08688bb2] rounded  backdrop-blur-3xl`}
+            lg:hidden absolute top-0 left-0 right-0  w-full p-3 sm:max-w-sm rounded  backdrop-blur-3xl`}
             role='dialog'
             aria-modal='true'
             aria-label='Mobile Menu'
@@ -87,7 +85,7 @@ const HeaderForDesktop = () => {
         </div>
       </nav>
       <div className=' flex place-self-end items-center space-x-2'>
-        {user ? (
+        {loading ? null : user ? (
           <>
             <Link href='/profile'>Profile</Link>
             {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
