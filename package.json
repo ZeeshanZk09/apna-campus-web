@@ -18,6 +18,7 @@
   "dependencies": {
     "@biomejs/biome": "^2.2.3",
     "@headlessui/react": "^2.2.3",
+    "@lottiefiles/dotlottie-react": "^0.17.3",
     "@prisma/adapter-pg": "^6.16.2",
     "@prisma/client": "^6.16.2",
     "@prisma/extension-accelerate": "^2.0.2",
