@@ -1,4 +1,3 @@
-// lib/prisma.ts
 import { PrismaClient } from '@/app/generated/prisma/client/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { neonConfig } from '@neondatabase/serverless';
