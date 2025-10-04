@@ -1,7 +1,7 @@
 import Card from '@/components/ui/Testimonials';
 import React from 'react';
 
-const Testimonials = (props) => {
+const Testimonials = () => {
   return (
     <section className='px-20 flex   justify-between items-center min-h-screen w-screen'>
       <div className='max-w-[50%] flex flex-col gap-10'>
