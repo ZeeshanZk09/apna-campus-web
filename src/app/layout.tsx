@@ -109,7 +109,9 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning className='dark scroll-smooth'>
       <head>
         <StructuredData data={organizationStructuredData} />
-        <GoogleAnalytics />
+        <Suspense fallback={<Loading />}>
+          <GoogleAnalytics />
+        </Suspense>
       </head>
       <body
         className={`transition-all duration-300 antialiased bg-gradient-to-b from-[#f5f9ff] to-[#e6f0ff] dark:bg-[#081015]`}
