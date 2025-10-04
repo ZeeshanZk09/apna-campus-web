@@ -112,6 +112,13 @@ export default function RootLayout({
         <Suspense fallback={<Loading />}>
           <GoogleAnalytics />
         </Suspense>
+        <script
+          id='Cookiebot'
+          src='https://consent.cookiebot.com/uc.js'
+          data-cbid='c3924214-275c-42e2-9630-5f5b92def79b'
+          type='text/javascript'
+          async
+        ></script>
       </head>
       <body
         className={`transition-all duration-300 antialiased bg-gradient-to-b from-[#f5f9ff] to-[#e6f0ff] dark:bg-[#081015]`}
