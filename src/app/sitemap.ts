@@ -24,9 +24,21 @@ function getStaticPaths(): string[] {
 }
 
 async function getDynamicSlugs(): Promise<string[]> {
-  const res = await axios.get('https://apna-campus.netlify.app/api/posts');
-  const posts = await res.data;
-  return posts.map((p: any) => `/blog/${p.slug}`);
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/posts`,
+      {
+        // 👇 prevents Next.js from trying to prerender stale data
+        cache: 'no-store',
+      }
+    );
+    if (!res.ok) return [];
+    const posts = await res.json();
+    return posts.map((p: any) => `/blog/${p.slug}`);
+  } catch (err) {
+    console.error('Failed to fetch posts:', err);
+    return [];
+  }
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
