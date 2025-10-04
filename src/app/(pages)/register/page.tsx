@@ -9,7 +9,7 @@ import { useRegisterUser } from '@/lib/queries/userQueries';
 import type { User } from '@/app/generated/prisma/browser';
 import { Eye, EyeClosed } from 'lucide-react';
 
-export default function RegisterForm() {
+export default function Register() {
   const router = useRouter();
   const { isDarkMode } = useTheme();
   const [error, setError] = useState<string>('');

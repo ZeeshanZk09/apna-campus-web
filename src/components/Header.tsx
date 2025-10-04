@@ -11,10 +11,13 @@ import Hamburger from './ui/Hamburger';
 import { User } from '@/app/generated/prisma/browser';
 import { fetchUser } from '@/app/actions/getUser';
 import axios from 'axios';
+import ThemeButton from './ui/ThemeButton';
+import { useTheme } from '@/hooks/ThemeChanger';
 const HeaderForDesktop = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sideBar, setSideBar] = useState(false);
+  const { isDarkMode } = useTheme();
   const router = useRouter();
 
   console.log(sideBar);
@@ -46,11 +49,12 @@ const HeaderForDesktop = () => {
       console.error(error);
     }
   };
+  // bg-[radial-gradient(circle,_#081015,_#08101580,_#08101510,_transparent)]
   return (
-    <header className='h-fit flex flex-col  px-8  py-2 shadow-sm shadow-blue-500 w-screen'>
-      <nav className='px-2 items-center flex justify-between w-full  '>
+    <header className='h-fit flex flex-col py-2 px-4 sm:px-6 lg:px-16 '>
+      <div className={` items-center flex justify-between w-full pb-2`}>
         <Image
-          className='bg-[radial-gradient(circle,_#081015,_#08101580,_#08101510,_transparent)] flex items-center justify-center  rounded-full w-[4rem] sm:w-[6rem]  object-fill '
+          className='bg-black flex items-center justify-center  rounded-full w-[4rem] sm:w-[6rem]  object-fill '
           src={`/logo/apna-campus-logo.png`}
           alt='Logo'
           width={1000}
@@ -80,34 +84,42 @@ const HeaderForDesktop = () => {
             </div>
           </div>
         )}
-        <div className='hidden sm:flex flex-col justify-between items-end'>
+        <div className='hidden sm:flex flex-col gap-y-4 items-start'>
           <Navigation />
+          <div className='w-full flex justify-between items-center'>
+            <ThemeButton />
+            <div>
+              {loading ? null : user ? (
+                <div>
+                  <Link href='/profile'>Profile</Link>
+                  {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
+                  <Logout handleClick={handleLogout} />
+                </div>
+              ) : (
+                <div>
+                  <Link
+                    href='/login'
+                    className='py-2 px-4 rounded hover:bg-blue-500 transition duration-300'
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href='/register'
+                    className=' bg-blue-500 py-2 px-4 text-white rounded hover:bg-blue-600 transition duration-300'
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </nav>
-      <div className=' flex place-self-end items-center space-x-2'>
-        {loading ? null : user ? (
-          <>
-            <Link href='/profile'>Profile</Link>
-            {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
-            <Logout handleClick={handleLogout} />
-          </>
-        ) : (
-          <>
-            <Link
-              href='/login'
-              className='py-2 px-4 rounded hover:bg-blue-500 transition duration-300'
-            >
-              Login
-            </Link>
-            <Link
-              href='/register'
-              className=' bg-blue-500 py-2 px-4 text-white rounded hover:bg-blue-600 transition duration-300'
-            >
-              Register
-            </Link>
-          </>
-        )}
       </div>
+      <hr
+        className={`border-t transition-colors ${
+          isDarkMode ? 'border-white/8' : 'border-gray-300'
+        }`}
+      />
     </header>
   );
 };

@@ -1,41 +1,62 @@
-"use client";
+'use client';
 
-import { useTheme } from "@/hooks/ThemeChanger";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import { useTheme } from '@/hooks/ThemeChanger'; // aapka hook
+import { Sun, Moon, Monitor } from 'lucide-react'; // ya koi icon library
 
-export default function ThemeButton({ className }: { className?: string }) {
-  const { isDarkMode, toggleTheme } = useTheme();
+type ThemeState = 'light' | 'dark' | 'system';
 
-  const Moon = () => {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="w-4 h-4 text-gray-900"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M20.354 15.354A9 9 0 118.646 3.646a7 7 0 1011.708 11.708z"
-        />
-      </svg>
-    );
-  };
+interface ThemeToggleProps {
+  className?: string;
+}
+
+export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
+  const { theme, isDarkMode, toggleTheme } = useTheme();
+  // assume your hook provides `theme` (one of 'light'|'dark'|'system') and `setTheme`
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className={className} style={{ width: 120, height: 36 }} />;
+  }
+
+  const options: { id: ThemeState; icon: React.ReactNode; label: string }[] = [
+    { id: 'light', icon: <Sun size={16} />, label: 'Light' },
+    { id: 'system', icon: <Monitor size={16} />, label: 'System' },
+    { id: 'dark', icon: <Moon size={16} />, label: 'Dark' },
+  ];
 
   return (
-    <button
-      onClick={toggleTheme}
-      suppressHydrationWarning
-      className={`${className} z-50 sticky bottom-10 left-20 w-8 p-2 h-8 bg-slate-400 text-white font-semibold rounded-full shadow-inner  transition-all delay-200 duration-300 outline-none`}
+    <div
+      className={`${className} inline-flex items-center rounded-lg ${
+        isDarkMode
+          ? 'bg-white/6 backdrop-blur-md border border-white/8'
+          : 'bg-black/6 backdrop-blur-md border border-black/8'
+      } p-1 space-x-1`}
     >
-      {isDarkMode ? (
-        <Image src={`/images/sun.svg`} alt="sun" width={1000} height={1000} />
-      ) : (
-        <Moon />
-      )}
-    </button>
+      {options.map((opt) => {
+        const active = theme === opt.id;
+        console.log('theme in themebutton', opt);
+        return (
+          <button
+            key={opt.id}
+            onClick={() => toggleTheme(opt.id)}
+            className={`w-6 h-6 flex items-center justify-center rounded-full transition-all
+              ${
+                active
+                  ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-300 shadow-md'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-white/30 dark:hover:bg-gray-600'
+              }
+            `}
+            aria-label={`Switch to ${opt.label} mode`}
+          >
+            {opt.icon}
+          </button>
+        );
+      })}
+    </div>
   );
 }
