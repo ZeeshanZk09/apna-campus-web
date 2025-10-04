@@ -81,6 +81,7 @@ const HeaderForDesktop = () => {
                   {label}
                 </Link>
               ))}
+              <ThemeButton />
             </div>
           </div>
         )}

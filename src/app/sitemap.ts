@@ -1,61 +1,43 @@
+import axios from 'axios';
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: 'https://apna-campus.netlify.app/',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/about',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/contact',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/faqs',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/testimonials',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/login',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/register',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/profile',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://apna-campus.netlify.app/admin/dashboard',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // Add all your important pages
+const baseUrl = 'https://apna-campus.netlify.app';
+
+function getStaticPaths(): string[] {
+  // manually or programmatically generate list of all page paths
+  const paths = [
+    '/',
+    '/about',
+    '/contact',
+    '/faqs',
+    '/testimonials',
+    '/login',
+    '/register',
+    '/profile',
+    '/admin/dashboard',
+    '/courses',
+    '/blog',
+    '/privacy-policy',
+    '/terms',
   ];
+  return paths;
+}
+
+async function getDynamicSlugs(): Promise<string[]> {
+  const res = await axios.get('https://apna-campus.netlify.app/api/posts');
+  const posts = await res.data;
+  return posts.map((p: any) => `/blog/${p.slug}`);
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticPaths = getStaticPaths();
+  const dynamicPaths = await getDynamicSlugs();
+  const allPaths = [...staticPaths, ...dynamicPaths];
+
+  return allPaths.map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: path === '/' ? 1 : 0.7,
+  }));
 }

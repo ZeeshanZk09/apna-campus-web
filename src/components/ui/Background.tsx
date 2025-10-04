@@ -37,7 +37,7 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
   return (
     <div className='relative w-full min-h-screen overflow-hidden'>
       {/* Video layer if loaded & no error */}
-      {theme !== 'light' && !hasError && (
+      {/* {theme !== 'light' && !hasError && (
         <video
           ref={videoRef}
           src={videoSrc}
@@ -49,57 +49,57 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
             isLoaded ? 'opacity-70' : 'opacity-0'
           }`}
         />
-      )}
+      )} */}
 
       {/* Gradients overlays for readability */}
-      <div
+      {/* <div
         className={
           theme != 'light'
             ? 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 pointer-events-none'
             : ''
         }
-      />
-      <div
+      /> */}
+      {/* <div
         className={
           theme != 'light'
             ? 'absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20 pointer-events-none'
             : ''
         }
-      />
+      /> */}
 
       {/* Noise / texture */}
-      <div
+      {/* <div
         className='absolute inset-0 pointer-events-none mix-blend-overlay opacity-5'
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/ %3E%3C/ filter %3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }}
-      />
+      /> */}
 
       {/* Vignette */}
-      <div
+      {/* <div
         className={
           theme != 'light'
             ? `absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.7)]`
             : ''
         }
-      />
+      /> */}
 
       {/* Ambient particles */}
       <div className='absolute inset-0 pointer-events-none overflow-hidden'>
-        {[...Array(15)].map((_, idx) => {
+        {[...Array(100)].map((_, idx) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
-          const delay = Math.random() * 5;
+          const delay = Math.random() * 2;
           const duration = 8 + Math.random() * 8;
           return (
             <span
               key={idx}
               className={`absolute block ${
-                theme != 'light' ? 'bg-white/10' : 'bg-white/50'
+                theme === 'dark' ? 'bg-blue-600/60' : 'bg-blue-600/60'
               } rounded-full`}
               style={{
-                width: 1,
-                height: 1,
+                width: 10,
+                height: 10,
                 left: `${left}%`,
                 top: `${top}%`,
                 animation: `drift ${duration}s linear infinite`,

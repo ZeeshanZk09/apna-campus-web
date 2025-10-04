@@ -1,8 +1,8 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useTheme } from "@/hooks/ThemeChanger";
-import { motion } from "framer-motion";
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTheme } from '@/hooks/ThemeChanger';
+import { motion } from 'framer-motion';
 
 export interface NavLinksType {
   id: number;
@@ -11,11 +11,13 @@ export interface NavLinksType {
 }
 
 export const navLinksData: NavLinksType[] = [
-  { id: 0, label: "Home", path: "/" },
-  { id: 1, label: "About", path: "/about" },
-  { id: 2, label: "Testimonials", path: "/testimonials" },
-  { id: 3, label: "FAQs", path: "/faqs" },
-  { id: 4, label: "Contact", path: "/contact" },
+  { id: 0, label: 'Home', path: '/' },
+  { id: 1, label: 'About', path: '/about' },
+  { id: 2, label: 'Testimonials', path: '/testimonials' },
+  { id: 3, label: 'FAQs', path: '/faqs' },
+  { id: 4, label: 'Contact', path: '/contact' },
+  { id: 4, label: 'login', path: '/login' },
+  { id: 4, label: 'register', path: '/register' },
 ];
 
 export default function Navigation() {
@@ -23,7 +25,7 @@ export default function Navigation() {
   const pathName = usePathname();
 
   return (
-    <nav className="flex gap-8 items-end bg-transparent">
+    <nav className='flex gap-8 items-end bg-transparent'>
       {navLinksData.map(({ id, label, path }) => {
         const isActive = pathName === path;
 
@@ -31,7 +33,7 @@ export default function Navigation() {
           <motion.div
             key={isActive ? `${path}-bounce` : `${path}`}
             animate={isActive ? { y: [0, -6, 0] } : {}}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
           >
             <Link
               key={id}
@@ -40,11 +42,11 @@ export default function Navigation() {
                 ${
                   isDarkMode
                     ? isActive
-                      ? "text-[#00ffea] [text-shadow:_0_0_5px_#00ffea,_0_0_10px_#00ffea]"
-                      : "text-[#bbb] hover:text-white"
+                      ? 'text-[#00ffea] [text-shadow:_0_0_5px_#00ffea,_0_0_10px_#00ffea]'
+                      : 'text-[#bbb] hover:text-white'
                     : isActive
-                    ? "text-[#081015]"
-                    : "text-[#707070] hover:text-black"
+                    ? 'text-[#081015]'
+                    : 'text-[#707070] hover:text-black'
                 }
                 after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-[#00ffea]
                 after:w-0 hover:after:w-full after:transition-all after:duration-300

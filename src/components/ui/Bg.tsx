@@ -13,7 +13,7 @@ export default function Bg({ children }: { children: React.ReactNode }) {
     ),
   });
 
-  const isHydrated = useHydrationFix(1000);
+  const isHydrated = useHydrationFix(100);
 
   if (!isHydrated) return null;
 
