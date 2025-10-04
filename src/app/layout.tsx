@@ -86,7 +86,7 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest', // Consider adding a webmanifest file
   verification: {
-    google: 'google-site-verification=y0uZ9rBSwrh0w-LV0i1iBqPp-5rnm8yFlAc0k3drpCA', // Add Google Search Console verification
+    google: 'y0uZ9rBSwrh0w-LV0i1iBqPp-5rnm8yFlAc0k3drpCA', // Add Google Search Console verification
   },
   category: 'education',
 };
