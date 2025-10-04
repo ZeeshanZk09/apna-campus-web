@@ -33,8 +33,8 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
     <div
       className={`${className} inline-flex items-center rounded-lg ${
         isDarkMode
-          ? 'bg-white/6 backdrop-blur-md border border-white/8'
-          : 'bg-black/6 backdrop-blur-md border border-black/8'
+          ? 'bg-white/6 backdrop-blur border border-white/8'
+          : 'bg-black/6 backdrop-blur border border-black/8'
       } p-1 space-x-1`}
     >
       {options.map((opt) => {

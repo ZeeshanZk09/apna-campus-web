@@ -51,7 +51,7 @@ const HeaderForDesktop = () => {
   };
   // bg-[radial-gradient(circle,_#081015,_#08101580,_#08101510,_transparent)]
   return (
-    <header className='h-fit flex flex-col py-2 px-4 sm:px-6 lg:px-16 '>
+    <header className='h-fit flex flex-col pt-2 px-4 sm:px-6 lg:px-16 '>
       <div className={` items-center flex justify-between w-full pb-2`}>
         <Image
           className='bg-black flex items-center justify-center  rounded-full w-[4rem] sm:w-[6rem]  object-fill '
@@ -61,30 +61,68 @@ const HeaderForDesktop = () => {
           height={1000}
         />
         <Hamburger handleClick={() => setSideBar(!sideBar)} />
+
+        {/* Modal-style sidebar / popup */}
         {sideBar && (
-          <div
-            className={`z-30 transition-all duration-700 ease-in-out delay-700 transform
-          ${sideBar ? 'translate-x-0 scale-100 opacity-100' : 'translate-x-full scale-0 opacity-0'}
-            lg:hidden absolute top-0 left-0 right-0  w-full p-3 sm:max-w-sm rounded  backdrop-blur-3xl`}
-            role='dialog'
-            aria-modal='true'
-            aria-label='Mobile Menu'
-            style={{ insetBlockStart: '0', top: '0' }}
-          >
-            <div className='space-y-4 py-3'>
-              {navLinksData.map(({ id, path, label }) => (
-                <Link
-                  key={id}
-                  href={path}
-                  className=' block rounded-lg  text-base font-light text-white'
+          <>
+            {/* Backdrop (click to close) */}
+            <div
+              className='fixed inset-0 z-20 bg-black/40 backdrop-blur-sm transition-opacity duration-300'
+              onClick={() => setSideBar(false)}
+              aria-hidden='true'
+            />
+
+            {/* Centered dialog wrapper with safe spacing from viewport edges */}
+            <div
+              className='fixed inset-4 z-30 flex items-center justify-center'
+              // keep focus in dialog if needed (use focus-trap lib for production)
+            >
+              {/* The popup card */}
+              <div
+                role='dialog'
+                aria-modal='true'
+                aria-label='Mobile Menu'
+                className={`relative w-full max-w-sm max-h-[90vh] overflow-auto rounded-2xl
+                    bg-white/40 dark:bg-gray-900/75 backdrop-blur-md
+                    shadow-2xl ring-1 ring-gray-900/5
+                    transform transition-all duration-300 ease-out
+                    scale-100 opacity-100 ${isDarkMode ? 'invert' : ''}`}
+                style={{ WebkitBackdropFilter: 'blur(8px)' }}
+              >
+                <button
+                  onClick={() => setSideBar(false)}
+                  className='absolute top-3 right-3 inline-flex items-center justify-center rounded-full p-1.5
+                     hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
+                  aria-label='Close menu'
                 >
-                  {label}
-                </Link>
-              ))}
-              <ThemeButton />
+                  <span className='text-lg leading-none'>✕</span>
+                </button>
+                {/* Content */}
+                <div className='space-y-2 pl-4 pt-6'>
+                  {navLinksData.map(({ id, path, label }) => (
+                    <Link
+                      key={id}
+                      href={path}
+                      className={`max-w-[18rem] block rounded-lg p-2 text-base font-medium transition-colors
+                         ${
+                           isDarkMode ? 'text-gray-100 bg-gray-800/40' : 'text-gray-700 bg-gray-100'
+                         }`}
+                      onClick={() => setSideBar(false)}
+                    >
+                      {label}
+                    </Link>
+                  ))}
+
+                  {/* Divider + theme button aligned nicely */}
+                  <div className='my-2'>
+                    <ThemeButton />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
+
         <div className='hidden sm:flex flex-col gap-y-4 items-start'>
           <Navigation />
           <div className='w-full flex justify-between items-center'>

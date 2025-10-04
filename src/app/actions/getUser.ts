@@ -73,7 +73,6 @@ async function fetchUser(): Promise<FetchUserResult> {
         console.warn('No userId in access token payload', { payload: accessResult.payload });
         return { user: null, loading: false };
       }
-
       const user = await db.user.findUnique({ where: { id: String(userId) } });
       if (!user) {
         console.warn('User not found for ID', { userId });

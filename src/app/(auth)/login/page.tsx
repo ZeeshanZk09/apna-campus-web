@@ -6,13 +6,13 @@ import { useLoginUser } from '@/lib/queries/userQueries';
 import { useForm } from '@tanstack/react-form';
 import { User } from '@/app/generated/prisma/browser';
 import { Eye, EyeClosed } from 'lucide-react';
+import { useTheme } from '@/hooks/ThemeChanger';
+import toastService from '@/lib/services/toastService';
 
 export default function LoginForm() {
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState<string>('');
   const [see, setSee] = useState<boolean>(true);
   const router = useRouter();
-
+  const { isDarkMode } = useTheme();
   const mutation = useLoginUser();
   const form = useForm({
     defaultValues: {
@@ -23,9 +23,6 @@ export default function LoginForm() {
 
     onSubmit: async ({ value }) => {
       console.log('Submitting form with values:', value);
-      setError('');
-      setSuccess('');
-
       try {
         const mutationData: Omit<
           Partial<User>,
@@ -41,76 +38,34 @@ export default function LoginForm() {
         mutation.mutate(mutationData as User, {
           onSuccess: (user) => {
             console.log(user);
-            setSuccess('Registration successful! Redirecting...');
+            toastService.success('Registration successful! Redirecting...');
             setTimeout(() => router.push('/profile'), 2000);
           },
           onError: (err) => {
             console.error('Mutation error:', err);
-            setError(err.message || 'Registration failed');
+            toastService.error(err.message || 'Registration failed');
           },
         });
       } catch (err) {
         console.error('Submission error:', err);
-        setError('Failed to upload image');
+        toastService.error('Registration failed');
       }
     },
   });
 
   return (
-    <div className='min-h-screen px-10 flex flex-col justify-center py-12 '>
-      <div className='sm:mx-auto  sm:w-full sm:max-w-md'>
-        <h2 className='mt-6 text-center text-3xl font-extrabold '>Sign in to your account</h2>
+    <div className='sm:max-w-7xl min-h-screen px-4 sm:px-6 lg:px-8 flex flex-col justify-center pb-10 '>
+      <div className='sm:mx-auto  sm:w-full '>
+        <h2 className='text-center text-xl font-medium '>Sign in to your account</h2>
       </div>
-
-      <div className='mt-8 border border-white rounded-md sm:mx-auto sm:w-full sm:max-w-md'>
+      <div
+        className={`${
+          isDarkMode
+            ? 'bg-white/6 backdrop-blur border border-white/8'
+            : 'bg-black/6 backdrop-blur border border-black/8'
+        } mt-2 rounded-2xl sm:mx-auto sm:w-full sm:max-w-md`}
+      >
         <div className=' py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-          {error && (
-            <div className='mb-4 bg-red-50 border-l-4 border-red-500 p-4'>
-              <div className='flex'>
-                <div className='flex-shrink-0'>
-                  <svg
-                    className='h-5 w-5 text-red-500'
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </div>
-                <div className='ml-3'>
-                  <p className='text-sm text-red-700'>{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {success && (
-            <div className='mb-4 bg-green-50 border-l-4 border-green-500 p-4'>
-              <div className='flex'>
-                <div className='flex-shrink-0'>
-                  <svg
-                    className='h-5 w-5 text-green-500'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </div>
-                <div className='ml-3'>
-                  <p className='text-sm text-green-700'>{success}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
           <form
             className='space-y-6'
             onSubmit={(e) => {
@@ -156,10 +111,10 @@ export default function LoginForm() {
                       <input
                         id='password'
                         name='password'
-                        type='password'
+                        type={see ? 'text' : 'password'}
                         autoComplete='current-password'
                         required
-                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                        className='appearance-none block w-full px-3 py-2 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm'
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}

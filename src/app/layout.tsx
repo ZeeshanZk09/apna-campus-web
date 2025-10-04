@@ -10,6 +10,7 @@ import GoogleAnalytics from '@/components/GoogleAnalytics';
 import DynamicBackground from '@/components/ui/Bg';
 import AppProviders from '@/lib/provider/AppProvider';
 import './../styles/globals.css';
+import ToastProvider from '@/lib/provider/ToastProvider';
 // Organization schema for structured data
 const organizationStructuredData = {
   '@context': 'https://schema.org',
@@ -130,6 +131,7 @@ export default function RootLayout({
               <DynamicBackground>
                 <HeaderForDesktop />
                 <main id='min-h-screen main-content' tabIndex={-1}>
+                  {(<ToastProvider />) as React.ReactNode}
                   {children}
                 </main>
                 <Footer />

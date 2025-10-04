@@ -16,8 +16,8 @@ export const navLinksData: NavLinksType[] = [
   { id: 2, label: 'Testimonials', path: '/testimonials' },
   { id: 3, label: 'FAQs', path: '/faqs' },
   { id: 4, label: 'Contact', path: '/contact' },
-  { id: 4, label: 'login', path: '/login' },
-  { id: 4, label: 'register', path: '/register' },
+  { id: 5, label: 'login', path: '/login' },
+  { id: 6, label: 'register', path: '/register' },
 ];
 
 export default function Navigation() {

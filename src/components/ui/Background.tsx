@@ -94,7 +94,7 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
           return (
             <span
               key={idx}
-              className={`absolute block ${
+              className={`absolute size-[${Math.random() * 2}rem] z-[${idx}] block ${
                 theme === 'dark' ? 'bg-blue-600/60' : 'bg-blue-600/60'
               } rounded-full`}
               style={{

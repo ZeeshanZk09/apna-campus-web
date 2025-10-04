@@ -32,9 +32,8 @@ export default function Footer() {
   return (
     <footer aria-labelledby='footer-heading' className='w-full bg-transparent relative z-10 py-10'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        {/* Top block: card-like, transparent with blur */}
         <div
-          className={`rounded-2xl backdrop-blur-md border p-8 mt-8 transition-colors duration-300 ${
+          className={`rounded-2xl backdrop-blur border p-8 mt-8 transition-colors duration-300 ${
             isDarkMode ? 'bg-white/6 border-white/8' : 'bg-black/6 border-black/8 shadow-lg'
           }`}
         >

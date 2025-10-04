@@ -3,6 +3,15 @@ import type { NextConfig } from 'next';
 /** @type {import('next').NextConfig} */
 const isProduction = process.env.NODE_ENV === 'production';
 const nextConfig: NextConfig = {
+  webpack(config, { isServer }) {
+    if (!isServer) {
+      config.module.rules.push({
+        test: /(@prisma\/extension-optimize|prisma-instrumentation-5-x|@opentelemetry)/,
+        use: 'null-loader',
+      });
+    }
+    return config;
+  },
   allowedDevOrigins: ['*.app.github.dev', '*.devtunnels.ms'],
   experimental: {
     serverActions: {

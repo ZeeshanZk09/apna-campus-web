@@ -8,12 +8,11 @@ import { useForm } from '@tanstack/react-form';
 import { useRegisterUser } from '@/lib/queries/userQueries';
 import type { User } from '@/app/generated/prisma/browser';
 import { Eye, EyeClosed } from 'lucide-react';
+import toastService from '@/lib/services/toastService';
 
 export default function Register() {
   const router = useRouter();
   const { isDarkMode } = useTheme();
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
   const [see, setSee] = useState<boolean>(true);
 
   const mutation = useRegisterUser();
@@ -27,9 +26,6 @@ export default function Register() {
     },
     onSubmit: async ({ value }) => {
       console.log('Submitting form with values:', value);
-      setError('');
-      setSuccess('');
-
       try {
         const mutationData: Omit<
           Partial<User>,
@@ -41,7 +37,7 @@ export default function Register() {
         };
 
         if (value.confirmPassword !== value.password) {
-          setError('Passwords do not match');
+          toastService.error('Passwords do not match');
           return;
         }
 
@@ -50,81 +46,35 @@ export default function Register() {
         mutation.mutate(mutationData as User, {
           onSuccess: (user) => {
             console.log(user);
-            setSuccess('Registration successful! Redirecting...');
+            toastService.success('Registration successful! Redirecting...');
             setTimeout(() => router.push('/profile'), 2000);
           },
           onError: (err) => {
             console.log('Mutation error:', err.message as any);
-            setError(err.message || 'Registration failed');
+            toastService.error(err.message || 'Registration failed');
           },
         });
       } catch (err) {
         console.error('Submission error:', err);
-        setError('Failed to upload image');
+        toastService.error('Failed to upload image');
       }
     },
   });
 
   return (
-    <div className='min-h-screen flex flex-col justify-center py-12 px-10'>
-      <div className='sm:mx-auto sm:w-full sm:max-w-md'>
+    <div className='min-h-screen sm:max-w-7xl flex flex-col justify-center px-4 sm:px-6 lg:px-8'>
+      <div className='sm:mx-auto sm:w-full'>
         <h2 className='mt-6 text-center text-4xl font-extralight'>Create a new account</h2>
       </div>
 
       <div
-        className={`mt-8 rounded sm:rounded-lg ${
-          !isDarkMode ? 'shadow-lg shadow-blue-500' : ''
+        className={`mt-8 rounded-2xl border ${
+          isDarkMode
+            ? 'bg-white/6 backdrop-blur border-white/8'
+            : 'bg-black/6 backdrop-blur border-black/8'
         } sm:mx-auto sm:w-full sm:max-w-md`}
       >
-        <div className='border border-white rounded py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-          {error && (
-            <div className='mb-4 bg-red-50 border-l-4 border-red-500 p-4'>
-              <div className='flex'>
-                <div className='flex-shrink-0'>
-                  <svg
-                    className='h-5 w-5 text-red-500'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </div>
-                <div className='ml-3'>
-                  <p className='text-sm text-red-700'>{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {success && (
-            <div className='mb-4 bg-green-50 border-l-4 border-green-500 p-4'>
-              <div className='flex'>
-                <div className='flex-shrink-0'>
-                  <svg
-                    className='h-5 w-5 text-green-500'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </div>
-                <div className='ml-3'>
-                  <p className='text-sm text-green-700'>{success}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
+        <div className='py-8 px-4 shadow sm:rounded-lg sm:px-10'>
           <form
             className='rounded sm:rounded-lg space-y-6'
             onSubmit={(e) => {
