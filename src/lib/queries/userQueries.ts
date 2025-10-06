@@ -21,14 +21,7 @@ export function useRegisterUser() {
     Error,
     Omit<
       User,
-      | 'id'
-      | 'coverPic'
-      | 'profilePic'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'isBlocked'
-      | 'isDeleted'
-      | 'role'
+      'coverPic' | 'profilePic' | 'createdAt' | 'updatedAt' | 'isBlocked' | 'isDeleted' | 'role'
     >
   >({
     mutationFn: async (d) => {

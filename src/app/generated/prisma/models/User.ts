@@ -29,6 +29,7 @@ export type UserMinAggregateOutputType = {
   password: string | null
   username: string | null
   role: $Enums.Role | null
+  Gender: $Enums.Gender | null
   profilePic: string | null
   coverPic: string | null
   isBlocked: boolean | null
@@ -43,6 +44,7 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   username: string | null
   role: $Enums.Role | null
+  Gender: $Enums.Gender | null
   profilePic: string | null
   coverPic: string | null
   isBlocked: boolean | null
@@ -57,6 +59,7 @@ export type UserCountAggregateOutputType = {
   password: number
   username: number
   role: number
+  Gender: number
   profilePic: number
   coverPic: number
   isBlocked: number
@@ -73,6 +76,7 @@ export type UserMinAggregateInputType = {
   password?: true
   username?: true
   role?: true
+  Gender?: true
   profilePic?: true
   coverPic?: true
   isBlocked?: true
@@ -87,6 +91,7 @@ export type UserMaxAggregateInputType = {
   password?: true
   username?: true
   role?: true
+  Gender?: true
   profilePic?: true
   coverPic?: true
   isBlocked?: true
@@ -101,6 +106,7 @@ export type UserCountAggregateInputType = {
   password?: true
   username?: true
   role?: true
+  Gender?: true
   profilePic?: true
   coverPic?: true
   isBlocked?: true
@@ -188,6 +194,7 @@ export type UserGroupByOutputType = {
   password: string
   username: string
   role: $Enums.Role
+  Gender: $Enums.Gender
   profilePic: string | null
   coverPic: string | null
   isBlocked: boolean
@@ -223,6 +230,7 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   username?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  Gender?: Prisma.EnumGenderFilter<"User"> | $Enums.Gender
   profilePic?: Prisma.StringNullableFilter<"User"> | string | null
   coverPic?: Prisma.StringNullableFilter<"User"> | string | null
   isBlocked?: Prisma.BoolFilter<"User"> | boolean
@@ -254,6 +262,7 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   username?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  Gender?: Prisma.SortOrder
   profilePic?: Prisma.SortOrderInput | Prisma.SortOrder
   coverPic?: Prisma.SortOrderInput | Prisma.SortOrder
   isBlocked?: Prisma.SortOrder
@@ -288,6 +297,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  Gender?: Prisma.EnumGenderFilter<"User"> | $Enums.Gender
   profilePic?: Prisma.StringNullableFilter<"User"> | string | null
   coverPic?: Prisma.StringNullableFilter<"User"> | string | null
   isBlocked?: Prisma.BoolFilter<"User"> | boolean
@@ -319,6 +329,7 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   username?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  Gender?: Prisma.SortOrder
   profilePic?: Prisma.SortOrderInput | Prisma.SortOrder
   coverPic?: Prisma.SortOrderInput | Prisma.SortOrder
   isBlocked?: Prisma.SortOrder
@@ -339,6 +350,7 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   username?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+  Gender?: Prisma.EnumGenderWithAggregatesFilter<"User"> | $Enums.Gender
   profilePic?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   coverPic?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isBlocked?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -353,6 +365,7 @@ export type UserCreateInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -384,6 +397,7 @@ export type UserUncheckedCreateInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -415,6 +429,7 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -446,6 +461,7 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -477,6 +493,7 @@ export type UserCreateManyInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -491,6 +508,7 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -505,6 +523,7 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -519,6 +538,7 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   username?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  Gender?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   coverPic?: Prisma.SortOrder
   isBlocked?: Prisma.SortOrder
@@ -533,6 +553,7 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   username?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  Gender?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   coverPic?: Prisma.SortOrder
   isBlocked?: Prisma.SortOrder
@@ -547,6 +568,7 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   username?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  Gender?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   coverPic?: Prisma.SortOrder
   isBlocked?: Prisma.SortOrder
@@ -567,6 +589,10 @@ export type UserNullableScalarRelationFilter = {
 
 export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
+}
+
+export type EnumGenderFieldUpdateOperationsInput = {
+  set?: $Enums.Gender
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -831,6 +857,7 @@ export type UserCreateWithoutSessionsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -861,6 +888,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -907,6 +935,7 @@ export type UserUpdateWithoutSessionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -937,6 +966,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -967,6 +997,7 @@ export type UserCreateWithoutApiKeysInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -997,6 +1028,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1043,6 +1075,7 @@ export type UserUpdateWithoutApiKeysInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1073,6 +1106,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1103,6 +1137,7 @@ export type UserCreateWithoutFollowsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1133,6 +1168,7 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1168,6 +1204,7 @@ export type UserCreateWithoutFollowingsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1198,6 +1235,7 @@ export type UserUncheckedCreateWithoutFollowingsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1244,6 +1282,7 @@ export type UserUpdateWithoutFollowsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1274,6 +1313,7 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1315,6 +1355,7 @@ export type UserUpdateWithoutFollowingsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1345,6 +1386,7 @@ export type UserUncheckedUpdateWithoutFollowingsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1375,6 +1417,7 @@ export type UserCreateWithoutAuditLogsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1405,6 +1448,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1451,6 +1495,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1481,6 +1526,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1511,6 +1557,7 @@ export type UserCreateWithoutCreatedConversationsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1541,6 +1588,7 @@ export type UserUncheckedCreateWithoutCreatedConversationsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1587,6 +1635,7 @@ export type UserUpdateWithoutCreatedConversationsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1617,6 +1666,7 @@ export type UserUncheckedUpdateWithoutCreatedConversationsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1647,6 +1697,7 @@ export type UserCreateWithoutConversationParticipantsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1677,6 +1728,7 @@ export type UserUncheckedCreateWithoutConversationParticipantsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1723,6 +1775,7 @@ export type UserUpdateWithoutConversationParticipantsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1753,6 +1806,7 @@ export type UserUncheckedUpdateWithoutConversationParticipantsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1783,6 +1837,7 @@ export type UserCreateWithoutMessagesSentInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1813,6 +1868,7 @@ export type UserUncheckedCreateWithoutMessagesSentInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1859,6 +1915,7 @@ export type UserUpdateWithoutMessagesSentInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1889,6 +1946,7 @@ export type UserUncheckedUpdateWithoutMessagesSentInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1919,6 +1977,7 @@ export type UserCreateWithoutReadReceiptsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1949,6 +2008,7 @@ export type UserUncheckedCreateWithoutReadReceiptsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -1995,6 +2055,7 @@ export type UserUpdateWithoutReadReceiptsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2025,6 +2086,7 @@ export type UserUncheckedUpdateWithoutReadReceiptsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2055,6 +2117,7 @@ export type UserCreateWithoutParentChildrenInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2085,6 +2148,7 @@ export type UserUncheckedCreateWithoutParentChildrenInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2120,6 +2184,7 @@ export type UserCreateWithoutChildParentsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2150,6 +2215,7 @@ export type UserUncheckedCreateWithoutChildParentsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2196,6 +2262,7 @@ export type UserUpdateWithoutParentChildrenInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2226,6 +2293,7 @@ export type UserUncheckedUpdateWithoutParentChildrenInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2267,6 +2335,7 @@ export type UserUpdateWithoutChildParentsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2297,6 +2366,7 @@ export type UserUncheckedUpdateWithoutChildParentsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2327,6 +2397,7 @@ export type UserCreateWithoutNotificationInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2357,6 +2428,7 @@ export type UserUncheckedCreateWithoutNotificationInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2403,6 +2475,7 @@ export type UserUpdateWithoutNotificationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2433,6 +2506,7 @@ export type UserUncheckedUpdateWithoutNotificationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2463,6 +2537,7 @@ export type UserCreateWithoutPostsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2493,6 +2568,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2539,6 +2615,7 @@ export type UserUpdateWithoutPostsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2569,6 +2646,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2599,6 +2677,7 @@ export type UserCreateWithoutCommentsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2629,6 +2708,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2675,6 +2755,7 @@ export type UserUpdateWithoutCommentsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2705,6 +2786,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2735,6 +2817,7 @@ export type UserCreateWithoutAssetInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2765,6 +2848,7 @@ export type UserUncheckedCreateWithoutAssetInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2811,6 +2895,7 @@ export type UserUpdateWithoutAssetInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2841,6 +2926,7 @@ export type UserUncheckedUpdateWithoutAssetInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2871,6 +2957,7 @@ export type UserCreateWithoutEnrollmentInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2901,6 +2988,7 @@ export type UserUncheckedCreateWithoutEnrollmentInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -2947,6 +3035,7 @@ export type UserUpdateWithoutEnrollmentInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2977,6 +3066,7 @@ export type UserUncheckedUpdateWithoutEnrollmentInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3007,6 +3097,7 @@ export type UserCreateWithoutSubmissionsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -3037,6 +3128,7 @@ export type UserUncheckedCreateWithoutSubmissionsInput = {
   password: string
   username: string
   role?: $Enums.Role
+  Gender?: $Enums.Gender
   profilePic?: string | null
   coverPic?: string | null
   isBlocked?: boolean
@@ -3083,6 +3175,7 @@ export type UserUpdateWithoutSubmissionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3113,6 +3206,7 @@ export type UserUncheckedUpdateWithoutSubmissionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  Gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverPic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3318,6 +3412,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   username?: boolean
   role?: boolean
+  Gender?: boolean
   profilePic?: boolean
   coverPic?: boolean
   isBlocked?: boolean
@@ -3350,6 +3445,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   username?: boolean
   role?: boolean
+  Gender?: boolean
   profilePic?: boolean
   coverPic?: boolean
   isBlocked?: boolean
@@ -3364,6 +3460,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   username?: boolean
   role?: boolean
+  Gender?: boolean
   profilePic?: boolean
   coverPic?: boolean
   isBlocked?: boolean
@@ -3378,6 +3475,7 @@ export type UserSelectScalar = {
   password?: boolean
   username?: boolean
   role?: boolean
+  Gender?: boolean
   profilePic?: boolean
   coverPic?: boolean
   isBlocked?: boolean
@@ -3386,7 +3484,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "username" | "role" | "profilePic" | "coverPic" | "isBlocked" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "username" | "role" | "Gender" | "profilePic" | "coverPic" | "isBlocked" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   submissions?: boolean | Prisma.User$submissionsArgs<ExtArgs>
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
@@ -3437,6 +3535,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     username: string
     role: $Enums.Role
+    Gender: $Enums.Gender
     profilePic: string | null
     coverPic: string | null
     isBlocked: boolean
@@ -3888,6 +3987,7 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly username: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
+  readonly Gender: Prisma.FieldRef<"User", 'Gender'>
   readonly profilePic: Prisma.FieldRef<"User", 'String'>
   readonly coverPic: Prisma.FieldRef<"User", 'String'>
   readonly isBlocked: Prisma.FieldRef<"User", 'Boolean'>

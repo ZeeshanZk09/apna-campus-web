@@ -24,7 +24,6 @@ export type Role = (typeof Role)[keyof typeof Role]
 export const Gender = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
-  OTHER: 'OTHER',
   UNKNOWN: 'UNKNOWN'
 } as const
 
@@ -83,9 +82,11 @@ export type ExamType = (typeof ExamType)[keyof typeof ExamType]
 
 export const GradeScale = {
   A_PLUS: 'A_PLUS',
-  A: 'A',
-  B: 'B',
-  C: 'C',
+  A_MINUS: 'A_MINUS',
+  B_PLUS: 'B_PLUS',
+  B_MINUS: 'B_MINUS',
+  C_PLUS: 'C_PLUS',
+  C_MINUS: 'C_MINUS',
   D: 'D',
   F: 'F'
 } as const

@@ -2,7 +2,6 @@ import { Term } from '@/utils/auth/authHelpers';
 import { ApiError } from '@/utils/NextApiError';
 import { NextResponse } from 'next/server';
 import db from '@/lib/prisma';
-import { Prisma, PrismaClient } from '@/app/generated/prisma/client';
 
 /**
  * Find an existing user by username OR email.
@@ -30,7 +29,7 @@ async function getExistingUser({
   const where =
     username && email ? { OR: [{ email }, { username }] } : username ? { username } : { email };
 
-  const existingUser = await PrismaClient.user.findFirst({ where });
+  const existingUser = await db.user.findFirst({ where });
 
   switch (term) {
     case 'register':
