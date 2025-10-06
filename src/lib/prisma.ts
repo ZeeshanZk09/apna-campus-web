@@ -11,41 +11,41 @@ neonConfig.webSocketConstructor = ws;
 // Guard for development hot-reload
 declare global {
   // eslint-disable-next-line no-var
-  var __prismaClient: PrismaClient | undefined;
+  var __prismaClient: TypePrismaClient | undefined;
 }
 
 // Function to create a new Prisma client
-// function makePrismaClient(): TypePrismaClient {
-//   const connectionString = process.env.DATABASE_URL;
-//   if (!connectionString) {
-//     throw new Error('DATABASE_URL is not defined');
-//   }
+function makePrismaClient(): TypePrismaClient {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error('DATABASE_URL is not defined');
+  }
 
-//   const adapter = new PrismaNeon({ connectionString });
-//   return new TypePrismaClient({ adapter });
-// }
+  const adapter = new PrismaNeon({ connectionString });
+  return new TypePrismaClient({ adapter });
+}
 
 // Single instance logic
-// const basePrisma: PrismaClient =
-//   process.env.NODE_ENV !== 'production'
-//     ? global.__prismaClient ||
-//       (() => {
-//         const client = makePrismaClient();
-//         global.__prismaClient = client;
-//         return client;
-//       })()
-//     : makePrismaClient();
+const basePrisma: PrismaClient =
+  process.env.NODE_ENV !== 'production'
+    ? global.__prismaClient ||
+      (() => {
+        const client = makePrismaClient();
+        global.__prismaClient = client;
+        return client;
+      })()
+    : makePrismaClient();
 
-const basePrisma: TypePrismaClient = PrismaClient;
+// const basePrisma: TypePrismaClient = PrismaClient;
 
 // Optionally extend with optimize
-let prisma;
+let prisma: TypePrismaClient;
 
 if (process.env.OPTIMIZE_API_KEY) {
   try {
-    prisma = (basePrisma as PrismaClient)?.$extends(
+    prisma = (TypePrismaClient as PrismaClient)?.$extends(
       withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY! })
-    );
+    ) as TypePrismaClient;
   } catch (err) {
     console.warn('Failed to apply Prisma Optimize extension:', err);
     prisma = basePrisma;

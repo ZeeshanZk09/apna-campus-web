@@ -10,7 +10,7 @@ export interface NavLinksType {
   path: string;
 }
 
-export const navLinksData: NavLinksType[] = [
+export const navLinksDataMobile: NavLinksType[] = [
   { id: 0, label: 'Home', path: '/' },
   { id: 1, label: 'About', path: '/about' },
   { id: 2, label: 'Testimonials', path: '/testimonials' },
@@ -20,13 +20,21 @@ export const navLinksData: NavLinksType[] = [
   { id: 6, label: 'register', path: '/register' },
 ];
 
+export const navLinksDataWeb: NavLinksType[] = [
+  { id: 0, label: 'Home', path: '/' },
+  { id: 1, label: 'About', path: '/about' },
+  { id: 2, label: 'Testimonials', path: '/testimonials' },
+  { id: 3, label: 'FAQs', path: '/faqs' },
+  { id: 4, label: 'Contact', path: '/contact' },
+];
+
 export default function Navigation() {
   const { isDarkMode } = useTheme();
   const pathName = usePathname();
 
   return (
     <nav className='flex gap-8 items-end bg-transparent'>
-      {navLinksData.map(({ id, label, path }) => {
+      {navLinksDataWeb.map(({ id, label, path }) => {
         const isActive = pathName === path;
 
         return (

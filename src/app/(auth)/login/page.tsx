@@ -39,7 +39,7 @@ export default function LoginForm() {
           onSuccess: (user) => {
             console.log(user);
             toastService.success('Registration successful! Redirecting...');
-            setTimeout(() => router.push('/profile'), 2000);
+            setTimeout(() => router.push(`/user/${(user as any).id}`), 2000);
           },
           onError: (err) => {
             console.error('Mutation error:', err);

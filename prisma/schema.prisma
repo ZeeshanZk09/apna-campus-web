@@ -29,7 +29,6 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
-  OTHER
   UNKNOWN
 }
 
@@ -70,9 +69,11 @@ enum ExamType {
 
 enum GradeScale {
   A_PLUS
-  A
-  B
-  C
+  A_MINUS
+  B_PLUS
+  B_MINUS
+  C_PLUS
+  C_MINUS
   D
   F
 }
@@ -148,6 +149,7 @@ model User {
   password   String
   username   String    @unique
   role       Role      @default(USER)
+  Gender     Gender    @default(UNKNOWN)
   profilePic String?
   coverPic   String?
   isBlocked  Boolean   @default(false)

@@ -6,11 +6,11 @@ import {
   UserWhereUniqueInput,
 } from '@/app/generated/prisma/models';
 import db from '@/lib/prisma';
-import { uploadFile } from '@/lib/utils/cloudinary';
+import { uploadFile } from '@/lib/cloudinary';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
-import { updateUserSchema, userSchema } from '@/lib/validators/userValidator';
+import { updateUserSchema } from '@/lib/validators/userValidator';
 import { revalidatePath } from 'next/cache';
 
 export async function getUserById(userId: string) {

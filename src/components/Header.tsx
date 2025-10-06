@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React from 'react';
-import Navigation, { navLinksData } from './ui/Navigation';
+import Navigation, { navLinksDataMobile } from './ui/Navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -99,7 +99,7 @@ const HeaderForDesktop = () => {
                 </button>
                 {/* Content */}
                 <div className='space-y-2 pl-4 pt-6'>
-                  {navLinksData.map(({ id, path, label }) => (
+                  {navLinksDataMobile.map(({ id, path, label }) => (
                     <Link
                       key={id}
                       href={path}
@@ -135,7 +135,7 @@ const HeaderForDesktop = () => {
                   <Logout handleClick={handleLogout} />
                 </div>
               ) : (
-                <div>
+                <div className='space-x-1'>
                   <Link
                     href='/login'
                     className='py-2 px-4 rounded hover:bg-blue-500 transition duration-300'

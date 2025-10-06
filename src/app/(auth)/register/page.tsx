@@ -47,7 +47,7 @@ export default function Register() {
           onSuccess: (user) => {
             console.log(user);
             toastService.success('Registration successful! Redirecting...');
-            setTimeout(() => router.push('/profile'), 2000);
+            setTimeout(() => router.push(`/user/${(user as any).id}`), 2000);
           },
           onError: (err) => {
             console.log('Mutation error:', err.message as any);

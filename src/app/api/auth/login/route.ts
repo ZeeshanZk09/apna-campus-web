@@ -1,8 +1,8 @@
 // app/api/auth/login/route.ts
 import { User } from '@/app/generated/prisma/client';
-import generateToken from '@/app/actions/generateToken';
+import { getExistingUser } from '@/lib/services/auth/userServices';
+import generateToken from '@/utils/auth/generateToken';
 import { ApiError } from '@/utils/NextApiError';
-import { getExistingUser } from '@/utils/authHelpers';
 import { compare } from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -22,6 +22,12 @@ export async function POST(request: Request) {
     console.log('Form Data in loginUser server action', formData);
 
     const { username, email, password } = rawData;
+
+    if ((!username && !email) || !password) {
+      return NextResponse.json(new ApiError(400, 'Email or username and password are required.'), {
+        status: 400,
+      });
+    }
 
     const user = (await getExistingUser({ username, email, term: 'login' })) as User;
 

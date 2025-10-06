@@ -29,8 +29,7 @@ export function useRegisterUser() {
       | 'isBlocked'
       | 'isDeleted'
       | 'role'
-    >,
-    unknown
+    >
   >({
     mutationFn: async (d) => {
       const formData = new FormData();

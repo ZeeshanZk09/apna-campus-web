@@ -1,42 +1,15 @@
 'use server';
 
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import db from '@/lib/prisma';
 import { decodeProtectedHeader } from 'jose';
-import type { User } from '@/app/generated/prisma/client';
 import { createAccessToken, verifyAccessToken, verifyRefreshToken } from '@/utils/token';
-import { JwtPayload } from 'jsonwebtoken';
-
-type FetchUserResult = { user: User | null; loading?: boolean; newAccessToken?: string };
-
-type VerifyTokenResult = {
-  payload: JwtPayload;
-  error: unknown;
-  valid: boolean;
-};
-
-function isJwtExpired(err: unknown) {
-  const e = err as any;
-  return Boolean(e && (e.code === 'ERR_JWT_EXPIRED' || /expired/i.test(String(e.message || e))));
-}
-
-function isSignatureError(err: unknown) {
-  const e = err as any;
-  return Boolean(
-    e &&
-      (e.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED' ||
-        /signature verification failed/i.test(String(e.message || e)) ||
-        /invalid signature/i.test(String(e.message || e)))
-  );
-}
-
-/** Read client IP from headers (works behind proxies/load balancers) */
-async function getIpAddress(): Promise<string | undefined> {
-  const h = await headers();
-  const forwarded = h.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0]?.trim();
-  return h.get('x-real-ip') ?? undefined;
-}
+import {
+  FetchUserResult,
+  isJwtExpired,
+  isSignatureError,
+  VerifyTokenResult,
+} from '@/utils/auth/authHelpers';
 
 /**
  * fetchUser:
@@ -62,7 +35,7 @@ async function fetchUser(): Promise<FetchUserResult> {
       header = decodeProtectedHeader(accessValue);
     } catch (e) {
       console.warn('Failed to decode token header', { error: String(e) });
-      return { user: null, loading: false };
+      // return { user: null, loading: false };
     }
 
     // 1) Try verifying as an ACCESS token
@@ -174,5 +147,4 @@ async function fetchUser(): Promise<FetchUserResult> {
   }
 }
 
-export { fetchUser, getIpAddress };
-export type { FetchUserResult };
+export { fetchUser };

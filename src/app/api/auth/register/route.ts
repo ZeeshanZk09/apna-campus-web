@@ -1,6 +1,6 @@
 import db from '@/lib/prisma';
-import generateToken from '@/app/actions/generateToken';
-import { getExistingUser } from '@/utils/authHelpers';
+import { getExistingUser } from '@/lib/services/auth/userServices';
+import generateToken from '@/utils/auth/generateToken';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
