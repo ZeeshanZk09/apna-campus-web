@@ -1,17 +1,13 @@
 'use server';
 
-import {
-  UserCreateInput,
-  UserUpdateInput,
-  UserWhereUniqueInput,
-} from '@/app/generated/prisma/models';
-import db from '@/lib/prisma';
+import { UserUpdateInput } from '@/app/generated/prisma/models';
+import { getPrisma } from '@/lib/prisma';
 import { uploadFile } from '@/lib/cloudinary';
-import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { updateUserSchema } from '@/lib/validators/userValidator';
 import { revalidatePath } from 'next/cache';
+const db = getPrisma();
 
 export async function getUserById(userId: string) {
   const user = await db.user.findUnique({

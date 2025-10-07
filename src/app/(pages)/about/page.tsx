@@ -8,34 +8,36 @@ export default function About() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   return (
-    <div className='max-w-7xl space-y-2 sm:mx-auto px-4 sm:px-6 lg:px-8  text-gray-200'>
+    <div
+      className={`${
+        isDarkMode ? 'text-gray-400' : 'text-gray-600'
+      }  max-w-7xl space-y-10 sm:mx-auto px-4 sm:px-6 lg:px-8  text-gray-200`}
+    >
       {/* Hero */}
       <section
-        className={`flex flex-col sm:flex-row justify-between items-center min-h-[80vh] rounded-2xl ${
+        className={`flex flex-col sm:flex-row smm:gap-2 sm:justify-between items-center min-h-[78vh] rounded-2xl ${
           isDarkMode
             ? 'bg-white/6 backdrop-blur border border-white/8'
             : 'bg-black/6 backdrop-blur border border-black/8'
-        } px-4 py-6 sm:px-16 mt-2 shadow-lg`}
+        } px-4 sm:px-16 mt-2 shadow-lg`}
       >
-        <div className='h-[60vh] flex flex-col gap-4 sm:justify-between items-start'>
+        <div className='md:h-[70vh] flex flex-col gap-2 sm:justify-between items-start'>
           <div className='flex flex-col gap-4'>
             <motion.h1
-              className='text-4xl font-bold mb-4'
+              className='text-4xl font-bold'
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
             >
               Empowering Learners, One Course at a Time
             </motion.h1>
             <p className='text-lg sm:max-w-md'>
-              Our mission is to make high-quality education accessible, engaging, and affordable for
-              everyone worldwide.
+              Our mission is to make high-quality IT education accessible, engaging, and affordable
+              for everyone worldwide.
             </p>
           </div>
           <button
             className={`
-            ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-600'
-            } inline-flex items-center justify-center rounded-md border border-gray-600 px-4 py-2 text-sm font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300
+             inline-flex items-center justify-center rounded-md border border-gray-600 px-4 py-2 text-sm font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300
             `}
             type='button'
             onClick={() => router.push('/courses')}
@@ -44,11 +46,12 @@ export default function About() {
           </button>
         </div>
         <Image
+          className='aspect-square w-full sm:w-2/5  object-cover rounded-2xl shadow-lg'
           src={'/images/course_8.jpg'}
           alt='About Image'
           loading='lazy'
-          width={500}
-          height={300}
+          width={200}
+          height={200}
         />
       </section>
 
@@ -62,8 +65,8 @@ export default function About() {
       >
         <h2 className='text-3xl font-semibold mb-4'>Our Mission</h2>
         <p className='text-gray-600 max-w-3xl mx-auto'>
-          We are redefining online education by combining expert instruction with an interactive and
-          adaptive platform that supports learners of all backgrounds.
+          We are redefining online IT education by combining expert instruction with an interactive
+          and adaptive platform that supports learners of all backgrounds.
         </p>
       </section>
 

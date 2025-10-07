@@ -2,7 +2,7 @@ import { User } from '@/app/generated/prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { getUserById, updateUser, deleteUser } from '@/app/actions/auth';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { ApiError, ApiErrorType } from '@/utils/NextApiError';
 // Define the response type for registerUser (matches NextResponse JSON)
 type UserResponse = Omit<User, 'password'>;
@@ -147,11 +147,16 @@ export function useDeleteUser() {
 }
 
 // Fetch user profile (optimized for profile page)
-export function useGetUserProfile(userId: string) {
-  return useQuery<Omit<User, 'password'>, Error>({
-    queryKey: QUERY_KEYS.userProfile(userId),
+export function useGetUserProfile(userId?: string | number) {
+  return useQuery<Promise<AxiosResponse<any, any, {}>>, Omit<User, 'password'>, Error>({
+    queryKey: QUERY_KEYS.userProfile(userId as string),
     queryFn: async () => {
-      const user = await getUserById(userId);
+      const user = await axios.get(`/api/user/:${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
       if (!user) throw new Error('User not found');
       return user;
     },

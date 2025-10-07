@@ -1,10 +1,11 @@
 // app/actions/generateToken.ts
 import { NextResponse } from 'next/server';
 import { ApiError } from '@/utils/NextApiError';
-import db from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 import { createAccessToken, createRefreshToken } from '@/utils/token';
 import { JWTPayload } from 'jose';
 import { getIpAddress } from '@/utils/auth/authHelpers';
+const db = getPrisma();
 
 export default async function generateToken(id: string, payload: JWTPayload) {
   try {

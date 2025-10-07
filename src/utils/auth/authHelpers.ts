@@ -3,8 +3,6 @@ import { headers } from 'next/headers';
 type Term = 'register' | 'login';
 import type { User } from '@/app/generated/prisma/client';
 
-type FetchUserResult = { user: User | null; loading?: boolean; newAccessToken?: string };
-
 type VerifyTokenResult = {
   payload: JwtPayload;
   error: unknown;
@@ -36,4 +34,4 @@ async function getIpAddress(): Promise<string | undefined> {
 
 export { isJwtExpired, isSignatureError, getIpAddress };
 
-export type { FetchUserResult, VerifyTokenResult, Term };
+export type { VerifyTokenResult, Term };

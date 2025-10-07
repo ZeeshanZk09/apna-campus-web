@@ -1,5 +1,5 @@
+// src/lib/prisma.ts
 import { PrismaClient as TypePrismaClient } from '@/app/generated/prisma/client';
-import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
@@ -8,51 +8,55 @@ import 'dotenv/config';
 
 neonConfig.webSocketConstructor = ws;
 
-// Guard for development hot-reload
 declare global {
-  // eslint-disable-next-line no-var
   var __prismaClient: TypePrismaClient | undefined;
+  var __prismaSingleton: TypePrismaClient | undefined;
 }
 
-// Function to create a new Prisma client
 function makePrismaClient(): TypePrismaClient {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error('DATABASE_URL is not defined');
   }
-
   const adapter = new PrismaNeon({ connectionString });
   return new TypePrismaClient({ adapter });
 }
 
-// Single instance logic
-const basePrisma: PrismaClient =
-  process.env.NODE_ENV !== 'production'
-    ? global.__prismaClient ||
-      (() => {
-        const client = makePrismaClient();
-        global.__prismaClient = client;
-        return client;
-      })()
-    : makePrismaClient();
+let _prisma: TypePrismaClient | undefined;
 
-// const basePrisma: TypePrismaClient = PrismaClient;
+export function getPrisma(): TypePrismaClient {
+  if (_prisma) return _prisma;
 
-// Optionally extend with optimize
-let prisma: TypePrismaClient;
+  // server-only guard
+  const isServer = typeof window === 'undefined' && process.env.NEXT_RUNTIME !== 'edge';
+  const basePrisma =
+    process.env.NODE_ENV !== 'production'
+      ? global.__prismaClient ||
+        (() => {
+          const c = makePrismaClient();
+          global.__prismaClient = c;
+          return c;
+        })()
+      : makePrismaClient();
 
-if (process.env.OPTIMIZE_API_KEY) {
-  try {
-    prisma = (TypePrismaClient as PrismaClient)?.$extends(
-      withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY! })
-    ) as TypePrismaClient;
-  } catch (err) {
-    console.warn('Failed to apply Prisma Optimize extension:', err);
-    prisma = basePrisma;
+  console.log(isServer, process.env.OPTIMIZE_API_KEY, process.env.DATABASE_URL);
+
+  if (isServer && process.env.OPTIMIZE_API_KEY && process.env.DATABASE_URL) {
+    try {
+      _prisma = basePrisma.$extends(
+        withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY })
+      ) as TypePrismaClient;
+    } catch (err) {
+      console.warn('Failed to apply Prisma Optimize extension:', err);
+      _prisma = basePrisma;
+    }
+  } else {
+    if (!isServer) console.warn('⚠️ Prisma: non-server runtime — skipping extensions');
+    if (!process.env.DATABASE_URL) console.warn('⚠️ DATABASE_URL missing — skipping Optimize');
+    _prisma = basePrisma;
   }
-} else {
-  prisma = basePrisma;
+
+  return _prisma;
 }
 
-export default prisma;
-export type Prisma = typeof prisma;
+export type Prisma = typeof TypePrismaClient;

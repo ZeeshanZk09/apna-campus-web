@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 import Logout from '../ui/Logout';
 import Hamburger from '../ui/Hamburger';
 import { User } from '@/app/generated/prisma/browser';
-import { fetchUser } from '@/app/actions/getUser';
 import axios from 'axios';
 import ThemeButton from '../ui/ThemeButton';
 import { useTheme } from '@/hooks/ThemeChanger';
+import { useGetUserProfile } from '@/lib/queries/userQueries';
 const HeaderForDesktop = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,14 +22,14 @@ const HeaderForDesktop = () => {
 
   console.log(sideBar);
   useEffect(() => {
-    const loadUser = async () => {
-      const { user, loading } = await fetchUser();
-      // console.log('useEffect: ', user, loading, fetchUser);
-      setUser(user ?? null);
-      setLoading(loading!);
-    };
+    // const loadUser = async () => {
+    //   const { user, loading } = await fetchUser();
+    //   // console.log('useEffect: ', user, loading, fetchUser);
+    //   setUser(user ?? null);
+    //   setLoading(loading!);
+    // };
 
-    loadUser();
+    // loadUser();
 
     if (sideBar) {
       document.body.style.overflow = 'hidden';
@@ -37,6 +37,10 @@ const HeaderForDesktop = () => {
       document.body.style.overflow = 'auto';
     }
   }, [sideBar]);
+
+  const mutation = useGetUserProfile();
+
+  mutation.refetch();
 
   console.log(user);
 
@@ -82,7 +86,7 @@ const HeaderForDesktop = () => {
                 role='dialog'
                 aria-modal='true'
                 aria-label='Mobile Menu'
-                className={`relative w-full max-w-sm max-h-[90vh] overflow-auto rounded-2xl
+                className={`relative w-full space-x-2 space-y-2 max-w-sm max-h-[90vh] overflow-auto rounded-2xl
                     bg-white/40 dark:bg-gray-900/75 backdrop-blur-md
                     shadow-2xl ring-1 ring-gray-900/5
                     transform transition-all duration-300 ease-out
@@ -91,7 +95,7 @@ const HeaderForDesktop = () => {
               >
                 <button
                   onClick={() => setSideBar(false)}
-                  className='absolute top-3 right-3 inline-flex items-center justify-center rounded-full p-1.5
+                  className='absolute top-3 right-3 inline-flex items-center justify-center rounded-full p-3
                      hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
                   aria-label='Close menu'
                 >
