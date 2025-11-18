@@ -8,7 +8,7 @@ import ProfileForm from '@/components/profile/ProfileForm';
 import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
 import { User } from '@/app/generated/prisma/browser';
-import { fetchUser } from '@/app/actions/getUser';
+import { useGetUserProfile } from '@/lib/queries/userQueries';
 
 interface FormatDateInput {
   toString?: () => string;
@@ -39,18 +39,24 @@ export default function ProfilePage() {
   const [error, setError] = useState('');
   const [isCoverMenuOpen, setIsCoverMenuOpen] = useState(false);
   const [isProfilePicOpen, setIsProfilePicOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const { user, loading } = await fetchUser();
-      // console.log('useEffect: ', user, loading, fetchUser);
-      setUser(user ?? null);
-      setLoading(loading as boolean);
-    };
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     const { user, loading } = await fetchUser();
+  //     // console.log('useEffect: ', user, loading, fetchUser);
+  //     setUser(user ?? null);
+  //     setLoading(loading as boolean);
+  //   };
 
-    loadUser();
-  }, []);
+  //   loadUser();
+  // }, []);
+
+  const mutation = useGetUserProfile();
+  mutation.refetch().then((t) => {
+    console.log(t);
+    setUser(t as any);
+  });
 
   const handleCoverPicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
