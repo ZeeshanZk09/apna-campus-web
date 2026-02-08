@@ -1,133 +1,131 @@
-import { User } from '@/app/generated/prisma/browser';
-import { useState, useRef } from 'react';
+"use client";
+
+import { Camera, Loader2, Mail, User as UserIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import type { User } from "@/app/generated/prisma/browser";
 
 export default function ProfileForm({ user }: { user: Partial<User> }) {
-  const [formData, setFormData] = useState({
-    username: user.username || '',
-    email: user.email || '',
-  });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [username, setUsername] = useState(user.username || "");
+  const [isLoading, setIsLoading] = useState(false);
   const profilePicRef = useRef<HTMLInputElement>(null);
-  const coverPicRef = useRef<HTMLInputElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess(false);
+    setIsLoading(true);
 
     try {
-      const formDataToSend = new FormData();
-
-      // Append text fields
-      formDataToSend.append('username', formData.username);
-      formDataToSend.append('email', formData.email);
-
-      // Append profile picture if selected
+      const formData = new FormData();
+      formData.append("username", username);
       if (profilePicRef.current?.files?.[0]) {
-        formDataToSend.append('profilePic', profilePicRef.current.files[0]);
+        formData.append("profilePic", profilePicRef.current.files[0]);
       }
 
-      // Append cover photo if selected
-      if (coverPicRef.current?.files?.[0]) {
-        formDataToSend.append('coverPic', coverPicRef.current.files[0]);
-      }
-
-      const response = await fetch('/api/users', {
-        method: 'PUT',
-        body: formDataToSend,
-        // Don't set Content-Type header - the browser will set it automatically with the correct boundary
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        body: formData,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update profile');
+      if (response.ok) {
+        toast.success("Profile updated successfully");
+      } else {
+        toast.error("Failed to update profile");
       }
-
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+    } catch (_err) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-4'>
-      <div>
-        <label htmlFor='username' className='block text-sm font-medium'>
-          Username
-        </label>
-        <input
-          type='text'
-          id='username'
-          name='username'
-          value={formData.username}
-          onChange={handleChange}
-          className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="flex items-center gap-6 mb-8">
+        <div className="relative group">
+          <div className="w-24 h-24 rounded-full bg-muted border-4 border-card overflow-hidden">
+            {user.profilePic ? (
+              <img
+                src={user.profilePic}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                <UserIcon size={40} />
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => profilePicRef.current?.click()}
+            className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full shadow-lg scale-0 group-hover:scale-100 transition-transform"
+          >
+            <Camera size={16} />
+          </button>
+          <input
+            type="file"
+            ref={profilePicRef}
+            className="hidden"
+            accept="image/*"
+          />
+        </div>
+        <div>
+          <h4 className="font-black">{user.username}</h4>
+          <p className="text-xs text-muted-foreground uppercase font-black tracking-widest">
+            {user.role}
+          </p>
+        </div>
       </div>
 
-      <div>
-        <label htmlFor='email' className='block text-sm font-medium'>
-          Email
-        </label>
-        <input
-          type='email'
-          id='email'
-          name='email'
-          value={formData.email}
-          onChange={handleChange}
-          className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-        />
+      <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            Username
+          </label>
+          <div className="relative">
+            <UserIcon
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size={18}
+            />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full bg-muted/50 border border-border rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold"
+              placeholder="Enter username"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size={18}
+            />
+            <input
+              type="email"
+              value={user.email}
+              disabled
+              className="w-full bg-muted/30 border border-border rounded-2xl py-3 pl-12 pr-4 cursor-not-allowed text-muted-foreground"
+            />
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label htmlFor='profilePic' className='block text-sm font-medium'>
-          Profile Picture
-        </label>
-        <input
-          type='file'
-          id='profilePic'
-          name='profilePic'
-          ref={profilePicRef}
-          accept='image/*'
-          className='mt-1 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100'
-        />
-      </div>
-
-      <div>
-        <label htmlFor='coverPic' className='block text-sm font-medium'>
-          Cover Photo (optional)
-        </label>
-        <input
-          type='file'
-          id='coverPic'
-          name='coverPic'
-          ref={coverPicRef}
-          accept='image/*'
-          className='mt-1 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100'
-        />
-      </div>
-
-      {error && <div className='text-red-600 text-sm'>{error}</div>}
-      {success && <div className='text-green-600 text-sm'>Profile updated successfully!</div>}
-
-      <div>
-        <button
-          type='submit'
-          className='px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700'
-        >
-          Update Profile
-        </button>
-      </div>
+      <button
+        disabled={isLoading}
+        className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-black shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+      >
+        {isLoading ? (
+          <Loader2 className="animate-spin" size={20} />
+        ) : (
+          "Save Changes"
+        )}
+      </button>
     </form>
   );
 }

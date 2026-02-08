@@ -1,7 +1,6 @@
-"use client"
+"use client";
 
-import React from 'react';
-import { styled } from 'styled-components';
+import { styled } from "styled-components";
 
 const Card = () => {
   return (
@@ -20,7 +19,7 @@ const Card = () => {
       </div>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   @keyframes autoRun3d {

@@ -1,9 +1,9 @@
 'use client';
 
-import { User } from '@/app/generated/prisma/browser';
 // import { User } from "@/app/lib/models/User";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import type { User } from '@/app/generated/prisma/browser';
 
 export default function ProtectedRoute({
   children,
@@ -28,7 +28,7 @@ export default function ProtectedRoute({
         }
 
         if (adminOnly && !data.user.isAdmin) {
-          router.push('/profile');
+          router.push('/dashboard');
           return;
         }
 

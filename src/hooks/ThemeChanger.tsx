@@ -1,19 +1,20 @@
-'use client';
-import React, {
+"use client";
+import type React from "react";
+import {
   createContext,
-  useState,
+  type ReactNode,
+  useCallback,
   useContext,
   useEffect,
-  ReactNode,
-  useCallback,
-} from 'react';
+  useState,
+} from "react";
 
 // Define types for the theme context
 interface ThemeContextType {
   isDarkMode: boolean;
-  theme: 'light' | 'dark' | 'system';
-  toggleTheme: (newTheme: 'light' | 'dark' | 'system') => void;
-  systemPreference: 'light' | 'dark';
+  theme: "light" | "dark" | "system";
+  toggleTheme: (newTheme: "light" | "dark" | "system") => void;
+  systemPreference: "light" | "dark";
 }
 
 // Create the context with default values
@@ -23,7 +24,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
@@ -34,41 +35,45 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
-  const [systemPreference, setSystemPreference] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
+  const [systemPreference, setSystemPreference] = useState<"light" | "dark">(
+    "light",
+  );
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState(false);
 
   // Get system preference
-  const getSystemPreference = useCallback((): 'light' | 'dark' => {
-    if (typeof window === 'undefined') return 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const getSystemPreference = useCallback((): "light" | "dark" => {
+    if (typeof window === "undefined") return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }, []);
 
   // Apply theme to document
-  const applyTheme = useCallback((appliedTheme: 'light' | 'dark') => {
+  const applyTheme = useCallback((appliedTheme: "light" | "dark") => {
     const root = document.documentElement;
 
-    if (appliedTheme === 'dark') {
-      root.classList.add('dark');
-      root.style.colorScheme = 'dark';
+    if (appliedTheme === "dark") {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
       setIsDarkMode(true);
     } else {
-      root.classList.remove('dark');
-      root.style.colorScheme = 'light';
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
       setIsDarkMode(false);
     }
   }, []);
 
   // Calculate effective theme
   const getEffectiveTheme = useCallback(
-    (themeValue: 'light' | 'dark' | 'system'): 'light' | 'dark' => {
-      if (themeValue === 'system') {
+    (themeValue: "light" | "dark" | "system"): "light" | "dark" => {
+      if (themeValue === "system") {
         return getSystemPreference();
       }
       return themeValue;
     },
-    [getSystemPreference]
+    [getSystemPreference],
   );
 
   // Initialize theme on mount
@@ -76,7 +81,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     setIsMounted(true);
 
     // Get saved theme from localStorage or default to 'system'
-    const savedTheme = (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system';
+    const savedTheme =
+      (localStorage.getItem("theme") as "light" | "dark" | "system") ||
+      "system";
     const currentSystemPref = getSystemPreference();
 
     setTheme(savedTheme);
@@ -88,24 +95,24 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   // Listen to system preference changes
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = (e: MediaQueryListEvent) => {
-      const newSystemPref = e.matches ? 'dark' : 'light';
+      const newSystemPref = e.matches ? "dark" : "light";
       setSystemPreference(newSystemPref);
 
       // Only apply if theme is set to 'system'
-      if (theme === 'system') {
+      if (theme === "system") {
         applyTheme(newSystemPref);
       }
     };
 
     // Modern browsers
     if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
     }
     // Fallback for older browsers
     else {
@@ -116,18 +123,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   // Toggle theme function
   const toggleTheme = useCallback(
-    (newTheme: 'light' | 'dark' | 'system') => {
+    (newTheme: "light" | "dark" | "system") => {
       // Validate theme value
-      if (!['light', 'dark', 'system'].includes(newTheme)) {
-        console.error(`Invalid theme value: ${newTheme}. Using 'system' instead.`);
-        newTheme = 'system';
+      if (!["light", "dark", "system"].includes(newTheme)) {
+        console.error(
+          `Invalid theme value: ${newTheme}. Using 'system' instead.`,
+        );
+        newTheme = "system";
       }
 
       // Save to localStorage
       try {
-        localStorage.setItem('theme', newTheme);
+        localStorage.setItem("theme", newTheme);
       } catch (error) {
-        console.error('Failed to save theme to localStorage:', error);
+        console.error("Failed to save theme to localStorage:", error);
       }
 
       // Update state
@@ -137,7 +146,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       const effectiveTheme = getEffectiveTheme(newTheme);
       applyTheme(effectiveTheme);
     },
-    [getEffectiveTheme, applyTheme]
+    [getEffectiveTheme, applyTheme],
   );
 
   // Prevent hydration mismatch by not rendering until mounted

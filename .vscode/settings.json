@@ -11,5 +11,6 @@
       "command": "npm run dev",
       "cwd": "${workspaceFolder}"
     }
-  ]
+  ],
+  "prisma.pinToPrisma6": false
 }

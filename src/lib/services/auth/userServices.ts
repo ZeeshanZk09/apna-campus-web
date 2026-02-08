@@ -1,13 +1,11 @@
-import { Term } from '@/utils/auth/authHelpers';
-import { ApiError } from '@/utils/NextApiError';
-import { NextResponse } from 'next/server';
-import db from '@/lib/prisma';
+import type { User } from "@/app/generated/prisma/client";
+import db from "@/lib/prisma";
+import type { Term } from "@/types/auth";
 
 /**
- * Find an existing user by username OR email.
- * At least one of `username` or `email` must be provided.
+ * Look up a user by username or email.
+ * Throws descriptive errors so API routes can catch and return proper HTTP responses.
  */
-
 async function getExistingUser({
   username,
   email,
@@ -16,30 +14,29 @@ async function getExistingUser({
   username?: string;
   email?: string;
   term?: Term;
-}) {
-  // require at least one identifier
+}): Promise<User | null> {
   if (!username && !email) {
-    return NextResponse.json(
-      new ApiError(400, 'Provide either username or email to find the user'),
-      { status: 400 }
-    );
+    throw new Error("Provide either username or email to find the user.");
   }
 
-  // build where clause based on what was provided
   const where =
-    username && email ? { OR: [{ email }, { username }] } : username ? { username } : { email };
+    username && email
+      ? { OR: [{ email }, { username }] }
+      : username
+        ? { username }
+        : { email: email! };
 
   const existingUser = await db.user.findFirst({ where });
 
   switch (term) {
-    case 'register':
+    case "register":
       if (existingUser) {
-        return NextResponse.json(new ApiError(400, 'User already exists'), { status: 400 });
+        throw new Error("User already exists with this email or username.");
       }
-      return existingUser;
-    case 'login':
+      return null;
+    case "login":
       if (!existingUser) {
-        return NextResponse.json(new ApiError(404, 'User does not exist'), { status: 404 });
+        throw new Error("Invalid credentials.");
       }
       return existingUser;
     default:

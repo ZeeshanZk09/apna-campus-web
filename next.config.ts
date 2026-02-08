@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  turbopack: {},
   allowedDevOrigins: ['*.app.github.dev', '*.devtunnels.ms'],
   experimental: {
     serverActions: {

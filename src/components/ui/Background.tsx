@@ -1,17 +1,21 @@
-'use client';
+"use client";
 
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { useTheme } from '@/hooks/ThemeChanger';
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useTheme } from "@/hooks/ThemeChanger";
+
 interface BackgroundProps {
   children: ReactNode;
   videoSrc?: string;
   posterImg?: string;
 }
 
-export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: BackgroundProps) {
+export default function Background({
+  children,
+  videoSrc = "/videos/bg1.mp4",
+}: BackgroundProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [_isLoaded, setIsLoaded] = useState(false);
+  const [_hasError, setHasError] = useState(false);
   const { theme } = useTheme();
   useEffect(() => {
     const vid = videoRef.current;
@@ -22,20 +26,20 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
     };
     const onError = () => {
       setHasError(true);
-      console.error('Background video error');
+      console.error("Background video error");
     };
 
-    vid.addEventListener('loadeddata', onLoad);
-    vid.addEventListener('error', onError);
+    vid.addEventListener("loadeddata", onLoad);
+    vid.addEventListener("error", onError);
 
     return () => {
-      vid.removeEventListener('loadeddata', onLoad);
-      vid.removeEventListener('error', onError);
+      vid.removeEventListener("loadeddata", onLoad);
+      vid.removeEventListener("error", onError);
     };
   }, []);
 
   return (
-    <div className='relative w-full min-h-screen overflow-hidden'>
+    <div className="relative w-full min-h-screen overflow-hidden">
       {/* Video layer if loaded & no error */}
       {/* {theme !== 'light' && !hasError && (
         <video
@@ -85,7 +89,7 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
       /> */}
 
       {/* Ambient particles */}
-      <div className='absolute inset-0 pointer-events-none overflow-hidden'>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(100)].map((_, idx) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
@@ -95,7 +99,7 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
             <span
               key={idx}
               className={`absolute size-[${Math.random() * 2}rem] z-[${idx}] block ${
-                theme === 'dark' ? 'bg-blue-600/60' : 'bg-blue-600/60'
+                theme === "dark" ? "bg-blue-600/60" : "bg-blue-600/60"
               } rounded-full`}
               style={{
                 width: 10,
@@ -111,7 +115,7 @@ export default function Background({ children, videoSrc = '/videos/bg1.mp4' }: B
       </div>
 
       {/* Content */}
-      <div className='relative z-10'>{children}</div>
+      <div className="relative z-10">{children}</div>
 
       {/* CSS for particles */}
       <style jsx>{`

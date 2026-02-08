@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export const useGoogleAnalytics = () => {
   const pathname = usePathname();
@@ -9,7 +9,7 @@ export const useGoogleAnalytics = () => {
 
   useEffect(() => {
     // Load gtag script
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`;
     document.head.appendChild(script);
@@ -19,15 +19,17 @@ export const useGoogleAnalytics = () => {
     function gtag(...args: any[]) {
       (window as any).dataLayer.push(args);
     }
-    gtag('js', new Date());
-    gtag('config', process.env.NEXT_PUBLIC_GA_ID);
+    gtag("js", new Date());
+    gtag("config", process.env.NEXT_PUBLIC_GA_ID);
   }, []);
 
   useEffect(() => {
     // Track page views
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
-      (window as any).gtag('config', process.env.NEXT_PUBLIC_GA_ID, {
+    if (typeof window !== "undefined" && (window as any).gtag) {
+      const url =
+        pathname +
+        (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+      (window as any).gtag("config", process.env.NEXT_PUBLIC_GA_ID, {
         page_path: url,
       });
     }

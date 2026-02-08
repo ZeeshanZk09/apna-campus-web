@@ -9,7 +9,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ------------------------------
@@ -24,6 +23,7 @@ enum Role {
   STAFF
   USER
   GUEST
+  ADMIN
 }
 
 enum Gender {
@@ -83,60 +83,28 @@ enum ConversationType {
   GROUP
   COURSE
   COHORT
-  INSTITUTE
   SYSTEM
 }
 
 // ------------------------------
-// File: 20-institute.prisma
+// File: 20-site-config.prisma
 // ------------------------------
 
-model Institute {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  logo      String?
-  timezone  String?  @default("UTC")
-  metadata  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  posts        Post[]
-  comments     Comment[]
-  departments  Department[]
-  programs     Program[]
-  courses      Course[]
-  cohorts      Cohort[]
-  assets       Asset[]
-  settings     Setting?
-  Fee          Fee[]
-  Conversation Conversation[]
-  Notification Notification[]
-  Integration  Integration[]
-}
-
 model Setting {
-  id          String   @id @default(uuid()) @db.Uuid
-  instituteId String   @unique @db.Uuid
-  key         String
-  value       Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-
-  institute Institute @relation(fields: [instituteId], references: [id])
+  id        String   @id @default(uuid()) @db.Uuid
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Integration {
-  id          String   @id @default(uuid()) @db.Uuid
-  instituteId String   @db.Uuid
-  provider    String
-  config      Json
-  enabled     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-
-  institute Institute @relation(fields: [instituteId], references: [id])
-
-  @@index([instituteId, provider])
+  id        String   @id @default(uuid()) @db.Uuid
+  provider  String   @unique
+  config    Json
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 // ------------------------------
@@ -144,18 +112,21 @@ model Integration {
 // ------------------------------
 
 model User {
-  id         String    @id @default(uuid()) @db.Uuid
-  email      String    @unique
-  password   String
-  username   String    @unique
-  role       Role      @default(USER)
-  Gender     Gender    @default(UNKNOWN)
-  profilePic String?
-  coverPic   String?
-  isBlocked  Boolean   @default(false)
-  isDeleted  Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime?
+  id               String    @id @default(uuid()) @db.Uuid
+  email            String    @unique
+  name             String
+  password         String
+  username         String    @unique
+  role             Role      @default(USER)
+  gender           Gender    @default(UNKNOWN)
+  profilePic       String?
+  coverPic         String?
+  isBlocked        Boolean   @default(false)
+  isDeleted        Boolean   @default(false)
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime?
 
   // app relations
   submissions              Submission[]
@@ -165,9 +136,9 @@ model User {
   followings               Follow[]                  @relation("UserFollowings")
   apiKeys                  ApiKey[]
   auditLogs                AuditLog[]                @relation("AuditLogUser")
-  Enrollment               Enrollment[]
-  Notification             Notification[]            @relation("NotificationUser")
-  Asset                    Asset[]
+  enrollments               Enrollment[]
+  notifications             Notification[]            @relation("NotificationUser")
+  assets                    Asset[]
   sessions                 Session[]
   // chat relations
   createdConversations     Conversation[]            @relation("ConversationCreatedByUser")
@@ -176,6 +147,8 @@ model User {
   readReceipts             MessageReadReceipt[]      @relation("MessageReadReceiptUser")
   parentChildren           ParentChild[]             @relation("ParentChildren")
   childParents             ParentChild[]             @relation("ChildParents")
+  teacherCohorts           TeacherCohort[]           @relation("TeacherCohorts")
+  testimonials             Testimonial[]
 }
 
 model Session {
@@ -185,6 +158,16 @@ model Session {
   userId       String   @db.Uuid
   user         User     @relation(fields: [userId], references: [id])
   expiresAt    DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
 
 model Admin {
@@ -257,7 +240,6 @@ model AuditLog {
 
 model Conversation {
   id               String           @id @default(uuid()) @db.Uuid
-  instituteId      String?          @db.Uuid
   type             ConversationType @default(DIRECT)
   title            String?
   isPrivate        Boolean          @default(true)
@@ -271,13 +253,11 @@ model Conversation {
 
   notification Notification[]
 
-  institute      Institute?                @relation(fields: [instituteId], references: [id])
   createdByUser  User?                     @relation("ConversationCreatedByUser", fields: [createdByUserId], references: [id])
   createdByAdmin Admin?                    @relation("ConversationCreatedByAdmin", fields: [createdByAdminId], references: [id])
   participants   ConversationParticipant[]
   messages       Message[]
 
-  @@index([instituteId])
   @@index([createdByUserId])
   @@index([createdByAdminId])
 }
@@ -354,7 +334,6 @@ model Notification {
   id             String   @id @default(uuid())
   userId         String?  @db.Uuid
   adminId        String?  @db.Uuid
-  instituteId    String?  @db.Uuid
   conversationId String?  @db.Uuid
   title          String
   body           String
@@ -365,10 +344,9 @@ model Notification {
 
   user         User?         @relation("NotificationUser", fields: [userId], references: [id])
   admin        Admin?        @relation("NotificationAdmin", fields: [adminId], references: [id])
-  institute    Institute?    @relation(fields: [instituteId], references: [id])
   conversation Conversation? @relation(fields: [conversationId], references: [id])
 
-  @@index([userId, instituteId])
+  @@index([userId])
 }
 
 // ------------------------------
@@ -376,23 +354,21 @@ model Notification {
 // ------------------------------
 
 model Post {
-  id          String    @id @default(uuid()) @db.Uuid
-  instituteId String?   @db.Uuid
-  title       String
-  content     String
-  images      String[]
-  likes       Int       @default(0)
-  comments    Comment[]
-  userId      String?   @db.Uuid // optional if admin creates it
-  adminId     String?   @db.Uuid // optional if admin creates it
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String    @id @default(uuid()) @db.Uuid
+  title     String
+  slug      String    @unique
+  content   String
+  images    String[]
+  likes     Int       @default(0)
+  comments  Comment[]
+  userId    String?   @db.Uuid // optional if admin creates it
+  adminId   String?   @db.Uuid // optional if admin creates it
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  user      User?      @relation("PostUser", fields: [userId], references: [id])
-  admin     Admin?     @relation("PostAdmin", fields: [adminId], references: [id])
-  institute Institute? @relation(fields: [instituteId], references: [id])
+  user  User?  @relation("PostUser", fields: [userId], references: [id])
+  admin Admin? @relation("PostAdmin", fields: [adminId], references: [id])
 
-  @@index([instituteId])
   @@index([userId, createdAt])
 }
 
@@ -403,7 +379,6 @@ model Comment {
   adminId      String?  @db.Uuid // optional if admin
   assignmentId String?  @db.Uuid
   postId       String?  @db.Uuid
-  instituteId  String?  @db.Uuid
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -411,15 +386,12 @@ model Comment {
   admin      Admin?      @relation("CommentAdmin", fields: [adminId], references: [id])
   assignment Assignment? @relation(fields: [assignmentId], references: [id])
   post       Post?       @relation(fields: [postId], references: [id])
-  institute  Institute?  @relation(fields: [instituteId], references: [id])
 
   @@index([postId])
-  @@index([instituteId])
 }
 
 model Asset {
   id          String   @id @default(uuid()) @db.Uuid
-  instituteId String?  @db.Uuid
   url         String
   key         String?
   mimeType    String?
@@ -427,10 +399,7 @@ model Asset {
   createdById String?  @db.Uuid
   createdAt   DateTime @default(now())
 
-  institute Institute? @relation(fields: [instituteId], references: [id])
-  createdBy User?      @relation(fields: [createdById], references: [id])
-
-  @@index([instituteId])
+  createdBy User? @relation(fields: [createdById], references: [id])
 }
 
 // ------------------------------
@@ -439,62 +408,50 @@ model Asset {
 
 model Department {
   id          String   @id @default(uuid()) @db.Uuid
-  instituteId String   @db.Uuid
-  name        String
+  name        String   @unique
   code        String?
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  institute Institute @relation(fields: [instituteId], references: [id])
-  programs  Program[]
-  courses   Course[]
-
-  @@unique([instituteId, name])
-  @@index([instituteId])
+  programs Program[]
+  courses  Course[]
 }
 
 model Program {
-  id             String   @id @default(uuid()) @db.Uuid
-  instituteId    String   @db.Uuid
-  departmentId   String?  @db.Uuid
-  name           String
+  id             String    @id @default(uuid()) @db.Uuid
+  departmentId   String?   @db.Uuid
+  name           String    @unique
   code           String?
   durationMonths Int?
   description    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
-  institute  Institute   @relation(fields: [instituteId], references: [id])
   department Department? @relation(fields: [departmentId], references: [id])
   courses    Course[]
   cohorts    Cohort[]
-
-  @@unique([instituteId, name])
-  @@index([instituteId])
 }
 
 model Course {
-  id           String   @id @default(uuid()) @db.Uuid
-  instituteId  String   @db.Uuid
-  programId    String?  @db.Uuid
-  departmentId String?  @db.Uuid
-  code         String
-  title        String
-  description  String?
-  creditHours  Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String    @id @default(uuid()) @db.Uuid
+  programId     String?   @db.Uuid
+  departmentId  String?   @db.Uuid
+  code          String    @unique
+  title         String
+  description   String?
+  creditHours   Int?
+  prerequisites String[] // Array of course codes
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-  institute   Institute    @relation(fields: [instituteId], references: [id])
   program     Program?     @relation(fields: [programId], references: [id])
   department  Department?  @relation(fields: [departmentId], references: [id])
   subjects    Subject[]
   assignments Assignment[]
   exams       Exam[]
-
-  @@unique([instituteId, code])
-  @@index([instituteId])
 }
 
 model Subject {
@@ -526,33 +483,32 @@ model Lesson {
 // File: 70-cohort-enrollment.prisma
 // ------------------------------
 model Cohort {
-  id          String    @id @default(uuid()) @db.Uuid
-  instituteId String    @db.Uuid
-  programId   String?   @db.Uuid
-  name        String
-  startDate   DateTime
-  endDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String    @id @default(uuid()) @db.Uuid
+  programId String?   @db.Uuid
+  name      String    @unique
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  institute   Institute    @relation(fields: [instituteId], references: [id])
-  program     Program?     @relation(fields: [programId], references: [id])
-  enrollments Enrollment[]
-  classrooms  Classroom[]
-
-  @@unique([instituteId, name])
-  @@index([instituteId])
+  program        Program?         @relation(fields: [programId], references: [id])
+  enrollments    Enrollment[]
+  teacherCohorts TeacherCohort[]
 }
 
-model Classroom {
+model TeacherCohort {
   id        String   @id @default(uuid()) @db.Uuid
-  cohortId  String?  @db.Uuid
-  name      String
-  capacity  Int?
+  teacherId String   @db.Uuid
+  cohortId  String   @db.Uuid
+  role      String? // e.g. Primary, Assistant
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  cohort Cohort? @relation(fields: [cohortId], references: [id])
+  teacher User   @relation("TeacherCohorts", fields: [teacherId], references: [id])
+  cohort  Cohort @relation(fields: [cohortId], references: [id])
+
+  @@unique([teacherId, cohortId])
+  @@index([cohortId])
+  @@index([teacherId])
 }
 
 model Enrollment {
@@ -622,6 +578,9 @@ model Evaluation {
   assignmentId String     @db.Uuid
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   studentId    String     @db.Uuid
+  marks        Float?
+  feedback     String?
+  gradedById   String?    @db.Uuid
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -677,19 +636,15 @@ model ExamResult {
 // File: 100-finance.prisma
 // ------------------------------
 model Fee {
-  id          String    @id @default(uuid()) @db.Uuid
-  instituteId String    @db.Uuid
-  title       String
-  amount      Float
-  type        FeeType
-  dueDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
+  id        String    @id @default(uuid()) @db.Uuid
+  title     String
+  amount    Float
+  type      FeeType
+  dueDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
 
-  institute Institute @relation(fields: [instituteId], references: [id])
-  invoices  Invoice[]
-
-  @@index([instituteId])
+  invoices Invoice[]
 }
 
 model Invoice {
@@ -730,3 +685,16 @@ model Payment {
 // ------------------------------
 // File: 110-auxiliary.prisma
 // ------------------------------
+
+model Testimonial {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @db.Uuid
+  name      String?
+  role      String?
+  content   String
+  rating    Int      @default(5)
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}

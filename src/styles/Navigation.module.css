@@ -34,7 +34,9 @@
 
 .active {
   color: #00ffea;
-  text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea;
+  text-shadow:
+    0 0 5px #00ffea,
+    0 0 10px #00ffea;
 }
 
 .clicked {

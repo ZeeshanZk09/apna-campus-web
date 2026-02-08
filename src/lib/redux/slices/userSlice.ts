@@ -1,5 +1,5 @@
 // lib/redux/slices/tenantSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserUIState {
   selectedUserId: string | null;
@@ -28,7 +28,7 @@ const initialState: UserUIState = {
 };
 
 const UserSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setSelectedUserId(state, action: PayloadAction<string | null>) {
@@ -40,7 +40,10 @@ const UserSlice = createSlice({
     setOffline(state, action: PayloadAction<boolean>) {
       state.isOffline = action.payload;
     },
-    setListFilter(state, action: PayloadAction<Partial<UserUIState['listFilter']>>) {
+    setListFilter(
+      state,
+      action: PayloadAction<Partial<UserUIState["listFilter"]>>,
+    ) {
       state.listFilter = { ...state.listFilter, ...action.payload };
     },
     setIsSyncing(state, action: PayloadAction<boolean>) {

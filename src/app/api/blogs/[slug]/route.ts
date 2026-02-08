@@ -1,9 +1,43 @@
-export async function GET() {}
+import ApiError from "@/lib/api/NextApiError";
+import ApiSuccess from "@/lib/api/NextApiSuccess";
+import { getPrisma } from "@/lib/prisma";
 
-export async function POST() {}
+const db = getPrisma();
 
-export async function DELETE() {}
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ slug: string }> },
+) {
+  try {
+    const { slug } = await params;
+    const post = await db.post.findUnique({
+      where: { slug: slug },
+      include: {
+        user: {
+          select: {
+            username: true,
+            profilePic: true,
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                username: true,
+                profilePic: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-export async function PATCH() {}
+    if (!post) {
+      return new ApiError(404, "Post not found").toNextResponse();
+    }
 
-export async function PUT() {}
+    return new ApiSuccess(post).toNextResponse();
+  } catch (error: any) {
+    return ApiError.internal(error.message).toNextResponse();
+  }
+}

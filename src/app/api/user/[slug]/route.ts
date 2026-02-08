@@ -1,20 +1,19 @@
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
 import { decodeJwt } from 'jose';
-
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
+import { ApiError } from '@/lib/api/NextApiError';
+import { ApiSuccess } from '@/lib/api/NextApiSuccess';
+import { isJwtExpired, isSignatureError } from '@/lib/auth/authHelpers';
+import { createAccessToken, verifyAccessToken, verifyRefreshToken } from '@/lib/auth/token';
 import { getPrisma } from '@/lib/prisma';
-import { createAccessToken, verifyAccessToken, verifyRefreshToken } from '@/utils/token';
-import { isJwtExpired, isSignatureError } from '@/utils/auth/authHelpers';
-import { ApiError } from '@/utils/NextApiError';
-import { ApiSuccess } from '@/utils/NextApiSuccess';
 
 type JwtPayloadLike = Record<string, any>;
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     // ----- 1) Read access cookie -----
     const cookieStore = await cookies();
-    const accessCookie = cookieStore.get('token');
+    const accessCookie = cookieStore.get('accessToken');
     if (!accessCookie) {
       return NextResponse.json(new ApiError(401, 'Unauthorized: no access token provided'), {
         status: 401,
@@ -45,7 +44,9 @@ export async function GET(req: NextRequest) {
       });
 
       if (!user) {
-        return NextResponse.json(new ApiError(404, 'User not found'), { status: 404 });
+        return NextResponse.json(new ApiError(404, 'User not found'), {
+          status: 404,
+        });
       }
 
       return NextResponse.json(new ApiSuccess(user, 200), { status: 200 });
@@ -53,16 +54,16 @@ export async function GET(req: NextRequest) {
 
     // ----- 3) Verification failed -> inspect error -----
     const verifyErr = accessResult.error;
-    const expired = isJwtExpired(verifyErr);
-    const sigFail = isSignatureError(verifyErr);
+    const expired = await isJwtExpired(verifyErr);
+    const sigFail = await isSignatureError(verifyErr);
 
     // If signature invalid -> token tampered -> clear cookie + 401
     if (sigFail) {
       const res = NextResponse.json(new ApiError(401, 'Unauthorized: invalid token'), {
         status: 401,
       });
-      // clear cookie
-      res.cookies.set('token', '', { maxAge: 0, path: '/' });
+      res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+      res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
       return res;
     }
 
@@ -72,12 +73,12 @@ export async function GET(req: NextRequest) {
       let decoded: JwtPayloadLike | undefined;
       try {
         decoded = decodeJwt(accessToken) as JwtPayloadLike;
-      } catch (err) {
-        // cannot decode -> force unauthorized
+      } catch (_err) {
         const res = NextResponse.json(new ApiError(401, 'Unauthorized: invalid token payload'), {
           status: 401,
         });
-        res.cookies.set('token', '', { maxAge: 0, path: '/' });
+        res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+        res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
         return res;
       }
 
@@ -87,7 +88,8 @@ export async function GET(req: NextRequest) {
           new ApiError(401, 'Unauthorized: cannot determine user from expired token'),
           { status: 401 }
         );
-        res.cookies.set('token', '', { maxAge: 0, path: '/' });
+        res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+        res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
         return res;
       }
 
@@ -97,12 +99,12 @@ export async function GET(req: NextRequest) {
       });
 
       if (!session) {
-        // no session -> unauthorized
         const res = NextResponse.json(
           new ApiError(401, 'Unauthorized: no refresh session available'),
           { status: 401 }
         );
-        res.cookies.set('token', '', { maxAge: 0, path: '/' });
+        res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+        res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
         return res;
       }
 
@@ -124,7 +126,8 @@ export async function GET(req: NextRequest) {
         const res = NextResponse.json(new ApiError(401, 'Unauthorized: refresh token invalid'), {
           status: 401,
         });
-        res.cookies.set('token', '', { maxAge: 0, path: '/' });
+        res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+        res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
         return res;
       }
 
@@ -133,16 +136,20 @@ export async function GET(req: NextRequest) {
 
       const user = await db.user.findUnique({ where: { id: userId } });
       if (!user) {
-        // user removed after session created
-        const res = NextResponse.json(new ApiError(404, 'User not found'), { status: 404 });
-        res.cookies.set('token', '', { maxAge: 0, path: '/' });
+        const res = NextResponse.json(new ApiError(404, 'User not found'), {
+          status: 404,
+        });
+        res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+        res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
         return res;
       }
 
       // Build response and set token cookie (maxAge in seconds)
       const fifteenMinutesInSeconds = 60 * 15;
-      const response = NextResponse.json(new ApiSuccess(user, 200), { status: 200 });
-      response.cookies.set('token', newAccessToken, {
+      const response = NextResponse.json(new ApiSuccess(user, 200), {
+        status: 200,
+      });
+      response.cookies.set('accessToken', newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -161,17 +168,20 @@ export async function GET(req: NextRequest) {
         // optionally delete server-side session(s) for safety
         await db.session.deleteMany({ where: { userId: maybeUserId } });
       }
-    } catch (e) {
+    } catch (_e) {
       // ignore decode/delete errors
     }
 
     const res = NextResponse.json(new ApiError(401, 'Unauthorized: token verification failed'), {
       status: 401,
     });
-    res.cookies.set('token', '', { maxAge: 0, path: '/' });
+    res.cookies.set('accessToken', '', { maxAge: 0, path: '/' });
+    res.cookies.set('refreshToken', '', { maxAge: 0, path: '/' });
     return res;
   } catch (error) {
     console.error('Failed to fetch user:', String(error));
-    return NextResponse.json(new ApiError(500, 'Failed to fetch user'), { status: 500 });
+    return NextResponse.json(new ApiError(500, 'Failed to fetch user'), {
+      status: 500,
+    });
   }
 }

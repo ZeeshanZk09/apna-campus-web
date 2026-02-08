@@ -1,36 +1,27 @@
 'use client';
 
+import axios from 'axios';
 import Image from 'next/image';
-import React from 'react';
-import Navigation, { navLinksDataMobile } from '../ui/Navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Logout from '../ui/Logout';
-import Hamburger from '../ui/Hamburger';
-import { User } from '@/app/generated/prisma/browser';
-import axios from 'axios';
-import ThemeButton from '../ui/ThemeButton';
 import { useTheme } from '@/hooks/ThemeChanger';
-import { useGetUserProfile } from '@/lib/queries/userQueries';
+import { useMe } from '@/hooks/useUserQueries';
+import Hamburger from '../ui/Hamburger';
+import Logout from '../ui/Logout';
+import Navigation, { navLinksDataMobile } from '../ui/Navigation';
+import ThemeButton from '../ui/ThemeButton';
+
 const HeaderForDesktop = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [sideBar, setSideBar] = useState(false);
   const { isDarkMode } = useTheme();
   const router = useRouter();
 
-  console.log(sideBar);
+  // Fetch current user session via React Query
+  const { data: meData } = useMe();
+  const user = meData?.user ?? null;
+
   useEffect(() => {
-    // const loadUser = async () => {
-    //   const { user, loading } = await fetchUser();
-    //   // console.log('useEffect: ', user, loading, fetchUser);
-    //   setUser(user ?? null);
-    //   setLoading(loading!);
-    // };
-
-    // loadUser();
-
     if (sideBar) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -38,19 +29,13 @@ const HeaderForDesktop = () => {
     }
   }, [sideBar]);
 
-  const mutation = useGetUserProfile();
-
-  mutation.refetch();
-
-  console.log(user);
-
   const handleLogout = async () => {
     try {
-      const result = await axios.post('/api/auth/logout');
-      console.log(result);
+      await axios.post('/api/auth/logout');
       router.push('/login');
+      router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error('Logout failed:', error);
     }
   };
   // bg-[radial-gradient(circle,_#081015,_#08101580,_#08101510,_transparent)]
@@ -58,7 +43,7 @@ const HeaderForDesktop = () => {
     <header className='h-fit flex flex-col pt-2 px-4 sm:px-6 lg:px-16 '>
       <div className={` items-center flex justify-between w-full pb-2`}>
         <Image
-          className='bg-black flex items-center justify-center  rounded-full w-[4rem] sm:w-[6rem]  object-fill '
+          className='bg-black flex items-center justify-center rounded-full w-16 sm:w-24 object-fill'
           src={`/logo/apna-campus-logo.png`}
           alt='Logo'
           width={1000}
@@ -132,9 +117,9 @@ const HeaderForDesktop = () => {
           <div className='w-full flex justify-between items-center'>
             <ThemeButton />
             <div>
-              {loading ? null : user ? (
+              {user ? (
                 <div>
-                  <Link href='/profile'>Profile</Link>
+                  <Link href='/dashboard'>Profile</Link>
                   {user.role === 'TEACHER' && <Link href='/admin/dashboard'>Admin</Link>}
                   <Logout handleClick={handleLogout} />
                 </div>

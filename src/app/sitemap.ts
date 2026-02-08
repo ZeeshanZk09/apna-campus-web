@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
+import db from '@/lib/prisma';
 
 const baseUrl = 'https://apna-campus.netlify.app';
 
@@ -25,18 +25,13 @@ function getStaticPaths(): string[] {
 
 async function getDynamicSlugs(): Promise<string[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/posts`,
-      {
-        // 👇 prevents Next.js from trying to prerender stale data
-        cache: 'no-store',
-      }
-    );
-    if (!res.ok) return [];
-    const posts = await res.json();
-    return posts.map((p: any) => `/blog/${p.slug}`);
+    const posts = await db.post.findMany({
+      select: { slug: true },
+      take: 200,
+    });
+    return posts.map((p) => `/blog/${p.slug}`);
   } catch (err) {
-    console.error('Failed to fetch posts:', err);
+    console.error('Failed to fetch posts for sitemap:', err);
     return [];
   }
 }
