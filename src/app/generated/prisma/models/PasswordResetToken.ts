@@ -194,14 +194,14 @@ export type PasswordResetTokenOrderByWithRelationInput = {
 
 export type PasswordResetTokenWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  email?: string
   token?: string
   AND?: Prisma.PasswordResetTokenWhereInput | Prisma.PasswordResetTokenWhereInput[]
   OR?: Prisma.PasswordResetTokenWhereInput[]
   NOT?: Prisma.PasswordResetTokenWhereInput | Prisma.PasswordResetTokenWhereInput[]
-  email?: Prisma.StringFilter<"PasswordResetToken"> | string
   expiresAt?: Prisma.DateTimeFilter<"PasswordResetToken"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"PasswordResetToken"> | Date | string
-}, "id" | "token">
+}, "id" | "email" | "token">
 
 export type PasswordResetTokenOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

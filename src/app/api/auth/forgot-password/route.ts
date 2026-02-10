@@ -1,7 +1,8 @@
-import crypto from "node:crypto";
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import prisma from "@/lib/prisma";
+import crypto from 'node:crypto';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { sendVerification } from '@/app/actions/send-verification';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -20,37 +21,20 @@ export async function POST(req: Request) {
       // For security reasons, don't reveal if the user exists
       return NextResponse.json({
         success: true,
-        message: "If an account exists, a reset link has been sent.",
+        message: 'If an account exists, a reset link has been sent.',
       });
     }
 
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
-
-    await prisma.passwordResetToken.create({
-      data: {
-        email,
-        token,
-        expiresAt,
-      },
-    });
-
-    // TODO: Send email
-    console.log(
-      `Password reset link: http://localhost:3000/reset-password?token=${token}`,
-    );
+    await sendVerification(email);
 
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
+      message: 'If an account exists, a reset link has been sent.',
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
