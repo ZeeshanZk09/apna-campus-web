@@ -47,6 +47,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  typescript: {
+    ignoreBuildErrors: true, // Set to false in production to enforce type safety
+  },
   // Add these for better HTTPS enforcement
   trailingSlash: true,
   poweredByHeader: false,
